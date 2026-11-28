@@ -1,792 +1,2146 @@
+ ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WILDKIDZ — Official Application Portal | WOWLD ENTERTAINMENT</title>
-<style>
-  :root {
-    --glass: rgba(255, 255, 255, 0.74);
-    --glass-strong: rgba(255, 255, 255, 0.9);
-    --border-silver: rgba(162, 172, 186, 0.48);
-    --silver-text: #6B7482;
-    --silver-bright: #4B535F;
-    --silver-light: #939CA9;
-    --silver-grad: linear-gradient(135deg, #4E5662 0%, #9FA8B6 45%, #58616E 100%);
-    --burgundy: #6E1C2B;
-    --red-accent: #C8283C;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>WILDKIDZ — Official Audition Portal | WOWLD ENTERTAINMENT</title>
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  <!-- Google Fonts: Futuristic Extended Display, 1970s Flowing Cursive, & Clean Modern Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Orbitron:wght@500;600;700;800;900&family=Pinyon+Script&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet" />
 
-  body {
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-    background: radial-gradient(circle at 20% 10%, #FFFFFF 0%, #F1F4F8 55%, #E3E8F0 100%);
-    color: var(--silver-bright);
-    overflow-x: hidden;
-    position: relative;
-  }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Syncopate"', '"Orbitron"', 'sans-serif'],
+            tech: ['"Orbitron"', 'sans-serif'],
+            cursive: ['"Pinyon Script"', '"Alex Brush"', 'cursive'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            void: '#020205',
+            obsidian: '#07080e',
+            chrome: '#e2e8f0',
+          },
+        }
+      }
+    };
+  </script>
 
-  #starCanvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
+  <style>
+    /* =====================================================================
+       BASE & OUTER-SPACE ATMOSPHERE
+       ===================================================================== */
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.036);
+      --glass-bg-hover: rgba(255, 255, 255, 0.062);
+      --glass-border-top: rgba(255, 255, 255, 0.24);
+      --glass-border-side: rgba(255, 255, 255, 0.09);
+      --glass-border-bottom: rgba(255, 255, 255, 0.04);
+      --chrome-gradient: linear-gradient(135deg, #ffffff 0%, #cbd5e1 38%, #64748b 52%, #f8fafc 72%, #94a3b8 100%);
+    }
 
-  .portal {
-    position: relative;
-    z-index: 1;
-    max-width: 660px;
-    margin: 0 auto;
-    padding: 34px 18px 90px;
-  }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  .liquid-glass {
-    background: var(--glass);
-    backdrop-filter: blur(26px) saturate(180%);
-    -webkit-backdrop-filter: blur(26px) saturate(180%);
-    border: 1px solid var(--border-silver);
-    box-shadow:
-      0 14px 40px rgba(112, 122, 138, 0.16),
-      inset 0 1px 0 rgba(255, 255, 255, 0.96);
-    border-radius: 26px;
-  }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #020205;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-  header.brand-header {
-    text-align: center;
-    padding: 26px 20px 22px;
-    margin-bottom: 16px;
-  }
+    /* Animated Starfield Canvas */
+    #starfield-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-  .org-tag {
-    font-size: 11px;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--silver-light);
-    font-weight: 600;
-  }
+    /* Ambient Liquid Refraction Orbs */
+    .ambient-orb {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(110px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+      animation: orbFloat 18s ease-in-out infinite alternate;
+    }
 
-  .main-title {
-    margin-top: 8px;
-    font-size: clamp(30px, 7vw, 48px);
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    background: var(--silver-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+    @keyframes orbFloat {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(28px, -22px, 0) scale(1.06); }
+      100% { transform: translate3d(-20px, 26px, 0) scale(0.96); }
+    }
 
-  .subtitle {
-    margin-top: 6px;
-    font-size: 12px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--silver-text);
-  }
+    /* =====================================================================
+       CINEMATIC RED EDGE & CORNER WARNING OVERLAY
+       ===================================================================== */
+    #red-warning-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0;
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow:
+        inset 0 0 85px rgba(239, 68, 68, 0.38),
+        inset 0 0 180px rgba(185, 28, 28, 0.22);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(239, 68, 68, 0.22) 0%, transparent 32%),
+        radial-gradient(circle at 100% 0%, rgba(239, 68, 68, 0.22) 0%, transparent 32%),
+        radial-gradient(circle at 0% 100%, rgba(239, 68, 68, 0.22) 0%, transparent 32%),
+        radial-gradient(circle at 100% 100%, rgba(239, 68, 68, 0.22) 0%, transparent 32%);
+    }
 
-  .progress-wrap {
-    padding: 14px 18px;
-    margin-bottom: 16px;
-  }
+    #red-warning-vignette.active {
+      opacity: 1;
+      animation: redEdgePulse 2.6s ease-in-out infinite;
+    }
 
-  .progress-top {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--silver-text);
-    margin-bottom: 10px;
-  }
+    @keyframes redEdgePulse {
+      0%, 100% {
+        box-shadow:
+          inset 0 0 75px rgba(239, 68, 68, 0.32),
+          inset 0 0 160px rgba(185, 28, 28, 0.18);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 110px rgba(239, 68, 68, 0.48),
+          inset 0 0 210px rgba(220, 38, 38, 0.28);
+      }
+    }
 
-  .progress-track {
-    height: 5px;
-    border-radius: 99px;
-    background: rgba(148, 156, 168, 0.24);
-    overflow: hidden;
-  }
+    /* =====================================================================
+       iOS 26 LIQUID GLASS SURFACES & METALLIC CHROME TYPOGRAPHY
+       ===================================================================== */
+    .liquid-glass {
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.065) 0%,
+        rgba(255, 255, 255, 0.025) 45%,
+        rgba(255, 255, 255, 0.015) 100%
+      );
+      backdrop-filter: blur(26px) saturate(165%);
+      -webkit-backdrop-filter: blur(26px) saturate(165%);
+      border-top: 1px solid var(--glass-border-top);
+      border-left: 1px solid rgba(255, 255, 255, 0.16);
+      border-right: 1px solid var(--glass-border-side);
+      border-bottom: 1px solid var(--glass-border-bottom);
+      box-shadow:
+        0 24px 60px -15px rgba(0, 0, 0, 0.82),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 12px rgba(255, 255, 255, 0.02);
+      transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
-  .progress-fill {
-    height: 100%;
-    width: 14.28%;
-    background: linear-gradient(90deg, #8F98A6, var(--burgundy), var(--red-accent));
-    transition: width 0.4s ease;
-  }
+    .liquid-glass-subtle {
+      background: rgba(255, 255, 255, 0.028);
+      backdrop-filter: blur(18px) saturate(150%);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
 
-  .stage-card {
-    padding: 26px 22px;
-    animation: fadeSlide 0.34s ease;
-  }
+    .chrome-text {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #e2e8f0 36%,
+        #94a3b8 54%,
+        #f8fafc 78%,
+        #cbd5e1 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 14px rgba(255, 255, 255, 0.14));
+    }
 
-  @keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    .chrome-btn {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(203, 213, 225, 0.1) 50%,
+        rgba(255, 255, 255, 0.2) 100%
+      );
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-top: 1px solid rgba(255, 255, 255, 0.55);
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      border-right: 1px solid rgba(255, 255, 255, 0.18);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow:
+        0 12px 32px -6px rgba(0, 0, 0, 0.75),
+        0 0 24px rgba(226, 232, 240, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, background 0.28s ease;
+    }
 
-  .stage-num {
-    font-size: 11px;
-    letter-spacing: 0.24em;
-    color: var(--burgundy);
-    font-weight: 700;
-    text-transform: uppercase;
-  }
+    .chrome-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: skewX(-22deg);
+      transition: left 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
-  .stage-heading {
-    margin-top: 6px;
-    font-size: clamp(22px, 5vw, 30px);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    background: var(--silver-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 20px;
-  }
+    .chrome-btn:hover::after {
+      left: 150%;
+    }
 
-  .field { margin-bottom: 16px; }
+    .chrome-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow:
+        0 18px 38px -6px rgba(0, 0, 0, 0.85),
+        0 0 32px rgba(255, 255, 255, 0.22),
+        inset 0 1px 2px rgba(255, 255, 255, 0.65);
+    }
 
-  label {
-    display: block;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--silver-text);
-    margin-bottom: 7px;
-    font-weight: 600;
-  }
+    .chrome-btn:active:not(:disabled) {
+      transform: translateY(0px) scale(0.985);
+    }
 
-  input, textarea {
-    width: 100%;
-    padding: 13px 15px;
-    border-radius: 16px;
-    border: 1px solid var(--border-silver);
-    background: var(--glass-strong);
-    color: var(--silver-bright);
-    font-size: 15px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
+    .chrome-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
 
-  input::placeholder, textarea::placeholder { color: var(--silver-light); }
+    /* Liquid Glass Inputs */
+    .glass-input {
+      width: 100%;
+      background: rgba(8, 10, 18, 0.55);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-top-color: rgba(255, 255, 255, 0.22);
+      border-radius: 16px;
+      padding: 0.875rem 1.1rem;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      outline: none;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
 
-  input:focus, textarea:focus {
-    border-color: var(--burgundy);
-    box-shadow: 0 0 0 3px rgba(110, 28, 43, 0.12);
-  }
+    .glass-input::placeholder {
+      color: rgba(148, 163, 184, 0.45);
+    }
 
-  textarea { min-height: 92px; resize: vertical; }
+    .glass-input:focus {
+      background: rgba(15, 19, 32, 0.72);
+      border-color: rgba(226, 232, 240, 0.55);
+      box-shadow:
+        0 0 0 3px rgba(226, 232, 240, 0.08),
+        0 0 20px rgba(255, 255, 255, 0.07),
+        inset 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
 
-  .compliment {
-    margin-top: 10px;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    color: var(--burgundy);
-    font-weight: 600;
-    min-height: 20px;
-  }
+    /* Date picker dark icon fix */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.88);
+      cursor: pointer;
+    }
 
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
+    /* Error State on Inputs & Cards */
+    .field-error {
+      border-color: #ef4444 !important;
+      box-shadow:
+        0 0 0 2px rgba(239, 68, 68, 0.16),
+        0 0 22px rgba(239, 68, 68, 0.25),
+        inset 0 1px 4px rgba(239, 68, 68, 0.12) !important;
+      animation: errorShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
 
-  .chip {
-    padding: 10px 16px;
-    border-radius: 999px;
-    border: 1px solid var(--border-silver);
-    background: var(--glass-strong);
-    color: var(--silver-text);
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+    @keyframes errorShake {
+      10%, 90% { transform: translate3d(-1.5px, 0, 0); }
+      20%, 80% { transform: translate3d(2.5px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-3.5px, 0, 0); }
+      40%, 60% { transform: translate3d(3.5px, 0, 0); }
+    }
 
-  .chip.active {
-    background: linear-gradient(135deg, var(--burgundy), var(--red-accent));
-    color: #FFFFFF;
-    border-color: transparent;
-    box-shadow: 0 6px 18px rgba(200, 40, 60, 0.22);
-  }
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.78rem;
+      margin-top: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      letter-spacing: 0.01em;
+      animation: fadeSlideDown 0.25s ease forwards;
+    }
 
-  .media-box {
-    padding: 16px;
-    border-radius: 20px;
-    border: 1px dashed rgba(110, 118, 130, 0.48);
-    background: rgba(255, 255, 255, 0.58);
-    margin-bottom: 16px;
-  }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  .row-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-  }
+    /* Category Liquid Glass Cards */
+    .category-card {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-top-color: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 1.15rem 1.25rem;
+      transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
-  .btn {
-    padding: 12px 20px;
-    border-radius: 999px;
-    border: 1px solid var(--border-silver);
-    background: var(--glass-strong);
-    color: var(--silver-bright);
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.2s ease;
-  }
+    .category-card:hover {
+      background: rgba(255, 255, 255, 0.055);
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateY(-2px);
+    }
 
-  .btn:hover { transform: translateY(-1px); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .category-card.selected {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15) 0%, rgba(148, 163, 184, 0.08) 100%);
+      border-color: rgba(255, 255, 255, 0.72);
+      box-shadow:
+        0 10px 30px -8px rgba(0, 0, 0, 0.75),
+        0 0 26px rgba(226, 232, 240, 0.18),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
 
-  .btn-primary {
-    background: linear-gradient(135deg, #6A7380, var(--burgundy));
-    color: #FFFFFF;
-    border: none;
-    box-shadow: 0 8px 22px rgba(110, 28, 43, 0.22);
-  }
+    /* View Transitions */
+    .portal-view {
+      animation: viewEntrance 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
 
-  .btn-red {
-    background: linear-gradient(135deg, var(--burgundy), var(--red-accent));
-    color: #FFFFFF;
-    border: none;
-  }
+    @keyframes viewEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.99);
+        filter: blur(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
 
-  .nav-bar {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 22px;
-  }
+    /* Chrome Star Slow Rotation */
+    @keyframes starPulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.22)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 34px rgba(226, 232, 240, 0.42)); transform: scale(1.03); }
+    }
 
-  .error-msg {
-    color: var(--red-accent);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    margin-top: 8px;
-    min-height: 18px;
-  }
+    .chrome-star-emblem {
+      animation: starPulseGlow 5s ease-in-out infinite;
+    }
 
-  .preview-img {
-    max-width: 150px;
-    border-radius: 14px;
-    margin-top: 10px;
-    display: block;
-  }
-
-  .preview-img.white-bg {
-    background: #FFFFFF;
-    padding: 6px;
-    border: 1px solid var(--border-silver);
-  }
-
-  .dossier-stage {
-    text-align: center;
-    padding: 20px 8px;
-  }
-
-  .folder-emblem {
-    font-size: 56px;
-    line-height: 1;
-    margin: 14px auto;
-    display: inline-block;
-    filter: drop-shadow(0 8px 18px rgba(110, 122, 138, 0.35));
-    transform: scale(0.4);
-    opacity: 0;
-    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
-  }
-
-  .folder-emblem.formed {
-    transform: scale(1);
-    opacity: 1;
-  }
-</style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #020205;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.28);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(226, 232, 240, 0.48);
+    }
+  </style>
 </head>
-<body>
-<canvas id="starCanvas"></canvas>
+<body class="antialiased selection:bg-slate-200 selection:text-slate-950">
 
-<main class="portal">
-  <header class="brand-header liquid-glass">
-    <div class="org-tag">WOWLD ENTERTAINMENT • A WORLD OF POSSIBILITIES</div>
-    <h1 class="main-title">WILDKIDZ</h1>
-    <div class="subtitle">Official Application Portal</div>
+  <!-- Deep Space Starfield & Floating Refraction Orbs -->
+  <canvas id="starfield-canvas"></canvas>
+  <div class="ambient-orb w-[420px] h-[420px] bg-slate-300/10 -top-28 -left-24"></div>
+  <div class="ambient-orb w-[480px] h-[480px] bg-indigo-400/10 bottom-10 -right-28" style="animation-delay: -6s;"></div>
+  <div class="ambient-orb w-[320px] h-[320px] bg-sky-300/5 top-1/2 left-1/3" style="animation-delay: -11s;"></div>
+
+  <!-- Restrained Cinematic Red Error Edge & Corner Overlay -->
+  <div id="red-warning-vignette" aria-hidden="true"></div>
+
+  <!-- Toast Notification Pill -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- =====================================================================
+       HORIZONTAL TOP NAVIGATION BAR
+       ===================================================================== -->
+  <header class="sticky top-0 z-40 px-3 sm:px-6 pt-3 sm:pt-4">
+    <nav class="max-w-6xl mx-auto liquid-glass rounded-full px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+      <!-- Brand Emblem & Title -->
+      <button type="button" onclick="navigateTo('landing')" class="flex items-center gap-2.5 sm:gap-3 text-left group focus:outline-none">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full liquid-glass-subtle flex items-center justify-center border border-white/25 group-hover:border-white/50 transition-all">
+          <!-- Metallic 4-Point Chrome Star SVG -->
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="navChromeStar" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="45%" stop-color="#CBD5E1" />
+                <stop offset="60%" stop-color="#64748B" />
+                <stop offset="100%" stop-color="#F8FAFC" />
+              </linearGradient>
+            </defs>
+            <path d="M32 2C33.8 20.5 43.5 30.2 62 32C43.5 33.8 33.8 43.5 32 62C30.2 43.5 20.5 33.8 2 32C20.5 30.2 30.2 20.5 32 2Z" fill="url(#navChromeStar)" />
+          </svg>
+        </div>
+        <div>
+          <div class="font-display text-xs sm:text-sm font-bold tracking-[0.22em] chrome-text leading-none">WILDKIDZ</div>
+          <div class="text-[9px] sm:text-[10px] tracking-[0.26em] text-slate-400 uppercase mt-0.5">WOWLD ENTERTAINMENT</div>
+        </div>
+      </button>
+
+      <!-- Horizontal Stage Progress Pills (Visible during Application Steps) -->
+      <div id="nav-progress-bar" class="hidden md:flex items-center gap-1.5 bg-white/[0.02] border border-white/10 rounded-full p-1">
+        <button type="button" data-nav-step="1" onclick="attemptStepJump(1)" class="nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-400">
+          01 PROFILE
+        </button>
+        <button type="button" data-nav-step="2" onclick="attemptStepJump(2)" class="nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-400">
+          02 SUBMISSIONS
+        </button>
+        <button type="button" data-nav-step="3" onclick="attemptStepJump(3)" class="nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-400">
+          03 IDENTITY
+        </button>
+        <button type="button" data-nav-step="4" onclick="attemptStepJump(4)" class="nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-400">
+          04 REVIEW
+        </button>
+      </div>
+
+      <!-- Right Action: Management Portal Trigger -->
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="navigateTo('management')" id="nav-mgmt-btn" class="px-3.5 sm:px-4 py-2 rounded-full liquid-glass-subtle hover:bg-white/10 border border-white/15 hover:border-white/35 text-[10px] sm:text-[11px] font-tech tracking-[0.18em] text-slate-200 flex items-center gap-1.5 transition-all">
+          <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>MANAGEMENT</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Compact Stage Indicator -->
+    <div id="mobile-progress-bar" class="hidden md:hidden max-w-6xl mx-auto mt-2 liquid-glass rounded-full px-3 py-1.5 flex items-center justify-between text-[10px] font-tech tracking-wider">
+      <button type="button" data-nav-step="1" onclick="attemptStepJump(1)" class="nav-step-pill px-2.5 py-1 rounded-full text-slate-400">01</button>
+      <span class="text-white/20">—</span>
+      <button type="button" data-nav-step="2" onclick="attemptStepJump(2)" class="nav-step-pill px-2.5 py-1 rounded-full text-slate-400">02</button>
+      <span class="text-white/20">—</span>
+      <button type="button" data-nav-step="3" onclick="attemptStepJump(3)" class="nav-step-pill px-2.5 py-1 rounded-full text-slate-400">03</button>
+      <span class="text-white/20">—</span>
+      <button type="button" data-nav-step="4" onclick="attemptStepJump(4)" class="nav-step-pill px-2.5 py-1 rounded-full text-slate-400">04 REVIEW</button>
+    </div>
   </header>
 
-  <section class="progress-wrap liquid-glass" id="progressSection">
-    <div class="progress-top">
-      <span id="progressLabel">STEP 01 OF 07</span>
-      <span id="progressPct">14%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-  </section>
+  <!-- =====================================================================
+       MAIN VIEWPORT CONTAINER
+       ===================================================================== -->
+  <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24">
 
-  <section class="stage-card liquid-glass" id="stageContainer"></section>
-</main>
+    <!-- ===================================================================
+         VIEW 0: LANDING PAGE — AUDITIONS
+         =================================================================== -->
+    <section id="view-landing" class="portal-view text-center py-6 sm:py-12">
+      <div class="liquid-glass rounded-[32px] sm:rounded-[40px] p-7 sm:p-14 relative overflow-hidden">
+        <!-- Subtle Specular Top Line -->
+        <div class="absolute inset-x-12 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
 
-<script>
-const WEB3FORMS_ACCESS_KEY = "0e2b3565-4a66-40a3-80dc-88f82592add3";
-const ROLES = ["Vocalist", "Rapper", "Dancer", "All-rounder", "Visual", "Leader"];
+        <!-- Metallic Chrome Star Emblem -->
+        <div class="flex justify-center mb-6 sm:mb-8">
+          <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full liquid-glass-subtle flex items-center justify-center border border-white/25 chrome-star-emblem">
+            <svg class="w-12 h-12 sm:w-14 sm:h-14" viewBox="0 0 100 100" fill="none">
+              <defs>
+                <linearGradient id="heroChromeGrad" x1="10" y1="10" x2="90" y2="90" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#FFFFFF" />
+                  <stop offset="32%" stop-color="#E2E8F0" />
+                  <stop offset="52%" stop-color="#475569" />
+                  <stop offset="75%" stop-color="#F8FAFC" />
+                  <stop offset="100%" stop-color="#94A3B8" />
+                </linearGradient>
+              </defs>
+              <path d="M50 4C52.6 32.5 67.5 47.4 96 50C67.5 52.6 52.6 67.5 50 96C47.4 67.5 32.5 52.6 4 50C32.5 47.4 47.4 32.5 50 4Z" fill="url(#heroChromeGrad)" />
+              <circle cx="50" cy="50" r="3.5" fill="#FFFFFF" />
+            </svg>
+          </div>
+        </div>
 
-const state = {
-  step: 0,
-  converging: false,
-  submitted: false,
-  submitting: false,
-  name: "",
-  complimentText: "",
-  ageCountry: "",
-  email: "",
-  roles: [],
-  whyAndTalent: "",
-  danceLink: "",
-  singLink: "",
-  photoUrl: "",
-  whiteBg: false,
-  photoSkipped: false
-};
+        <!-- Division Tag -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-subtle border border-white/15 mb-5">
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-200 animate-pulse"></span>
+          <span class="text-[10px] sm:text-xs font-tech tracking-[0.28em] text-slate-300 uppercase">WOWLD ENTERTAINMENT RECRUITMENT</span>
+        </div>
 
-function esc(s = "") {
-  return String(s).replace(/[&<>"']/g, m => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[m]));
-}
+        <!-- Main Heading -->
+        <h1 class="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-[0.18em] chrome-text uppercase mb-3">
+          WILDKIDZ
+        </h1>
 
-function getNameCompliment(val) {
-  const clean = val.trim();
-  if (!clean) return "";
-  return `Nice name, ${clean} ✦`;
-}
-
-function render() {
-  const box = document.getElementById("stageContainer");
-  const prog = document.getElementById("progressSection");
-
-  if (state.converging || state.submitted) {
-    prog.style.display = "none";
-    box.innerHTML = `
-      <div class="dossier-stage">
-        <div class="stage-num">${state.submitted ? "APPLICATION RECEIVED" : "CONVERGING STARS INTO DOSSIER"}</div>
-        <div class="folder-emblem ${state.submitted ? "formed" : ""}" id="dossierFolder">📁</div>
-        <h2 class="stage-heading" style="margin-bottom:10px;">
-          ${state.submitted ? "WELCOME TO WILDKIDZ" : "SEALING YOUR FILE..."}
+        <h2 class="font-tech text-sm sm:text-lg md:text-xl font-semibold tracking-[0.32em] text-slate-200 uppercase mb-4">
+          OFFICIAL AUDITIONS
         </h2>
-        <p style="color:var(--silver-text);line-height:1.65;max-width:460px;margin:0 auto 20px;">
-          ${state.submitted
-            ? `Thank you, ${esc(state.name || "Applicant")}. All floating stars converged into your WILDKIDZ application dossier and were sent to wildkidz1001@gmail.com.`
-            : "Every star on screen is gathering into one file for WOWLD Entertainment..."}
+
+        <!-- 1970s Flowing Cursive Tagline -->
+        <p class="font-cursive text-3xl sm:text-5xl text-slate-100/95 tracking-wide mb-7 drop-shadow-[0_2px_12px_rgba(255,255,255,0.2)]">
+          A new opportunity begins here.
         </p>
-        ${state.submitted ? `<button type="button" class="btn btn-primary" onclick="resetPortal()">NEW APPLICATION</button>` : ""}
-      </div>`;
-    if (state.submitted) {
-      requestAnimationFrame(() => {
-        const el = document.getElementById("dossierFolder");
-        if (el) el.classList.add("formed");
+
+        <!-- Introduction Copy -->
+        <p class="max-w-xl mx-auto text-sm sm:text-base text-slate-300/90 leading-relaxed font-light mb-9 sm:mb-11">
+          WILDKIDZ is seeking dedicated, creative, and driven individuals ready to step into the next era of global music and performance. Operating as an independent entertainment group under <span class="text-white font-medium">WOWLD</span>, we are assembling a roster built on artistry, discipline, and vision.
+        </p>
+
+        <!-- Prominent Metallic Liquid-Glass CTA Button -->
+        <div class="flex flex-col items-center gap-4">
+          <button type="button" onclick="startAudition()" class="chrome-btn px-8 sm:px-11 py-4 sm:py-4.5 rounded-full font-tech text-xs sm:text-sm font-bold tracking-[0.24em] text-white uppercase cursor-pointer">
+            [ BEGIN YOUR AUDITION ]
+          </button>
+          <span class="text-[11px] text-slate-400 tracking-wider">
+            3-STAGE DIGITAL EVALUATION • VIDEO LINKS REQUIRED
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STAGE 01 — PERSONAL INFORMATION
+         =================================================================== -->
+    <section id="view-step-1" class="portal-view hidden">
+      <div class="liquid-glass rounded-[30px] sm:rounded-[36px] p-6 sm:p-10">
+        <!-- Stage Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-white/10 pb-6 mb-8 gap-2">
+          <div>
+            <div class="text-[11px] font-tech tracking-[0.28em] text-slate-400 uppercase mb-1.5">STAGE 01 OF 03 — PERSONAL INFORMATION</div>
+            <h2 class="font-display text-xl sm:text-3xl font-bold tracking-[0.14em] chrome-text uppercase">APPLICANT PROFILE</h2>
+          </div>
+          <span class="font-cursive text-2xl sm:text-3xl text-slate-300">Identity &amp; Origin</span>
+        </div>
+
+        <!-- Stage 01 Form Fields -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+          <!-- 1. Full Name -->
+          <div class="sm:col-span-2">
+            <label for="fullName" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              01. Full Name <span class="text-slate-400">*</span>
+            </label>
+            <input type="text" id="fullName" class="glass-input" placeholder="Enter your legal or stage full name" autocomplete="name" />
+            <div id="err-fullName" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 2. Age -->
+          <div>
+            <label for="age" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              02. Age <span class="text-slate-400">*</span>
+            </label>
+            <input type="number" id="age" min="8" max="65" class="glass-input" placeholder="e.g. 19" inputmode="numeric" />
+            <div id="err-age" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 3. Birthday -->
+          <div>
+            <label for="birthday" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              03. Birthday <span class="text-slate-400">*</span>
+            </label>
+            <input type="date" id="birthday" class="glass-input" />
+            <div id="err-birthday" class="error-msg hidden"></div>
+          </div>
+
+          <!-- Dynamic Under-18 Minor Alert Banner (Auto-reveals if Age < 18) -->
+          <div id="minor-notice-banner" class="hidden sm:col-span-2 liquid-glass-subtle rounded-2xl p-4 border border-amber-300/30 bg-amber-500/[0.04]">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-amber-300/15 border border-amber-300/40 flex items-center justify-center shrink-0 mt-0.5 text-amber-200 text-xs font-bold">!</div>
+              <div>
+                <div class="text-xs font-tech tracking-[0.15em] text-amber-200 uppercase">MINOR APPLICANT PROTOCOL (UNDER 18)</div>
+                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Because you are under 18 years old, parental or legal guardian consent will be required before your application can be finalized.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Height -->
+          <div>
+            <label for="height" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              04. Height <span class="text-slate-400">*</span>
+            </label>
+            <input type="text" id="height" class="glass-input" placeholder="e.g. 172 cm or 5'8&quot;" />
+            <div id="err-height" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 5. Country -->
+          <div>
+            <label for="country" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              05. Country <span class="text-slate-400">*</span>
+            </label>
+            <input type="text" id="country" class="glass-input" placeholder="Country of residence" autocomplete="country-name" />
+            <div id="err-country" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 6. Email Address -->
+          <div>
+            <label for="email" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              06. Email Address <span class="text-slate-400">*</span>
+            </label>
+            <input type="email" id="email" class="glass-input" placeholder="applicant@example.com" autocomplete="email" />
+            <div id="err-email" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 7. Phone Number -->
+          <div>
+            <label for="phone" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              07. Phone Number <span class="text-slate-400">*</span>
+            </label>
+            <input type="tel" id="phone" class="glass-input" placeholder="+1 234 567 8900 (Backup contact)" autocomplete="tel" />
+            <div id="err-phone" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 8. Why did you audition for WILDKIDZ? -->
+          <div class="sm:col-span-2">
+            <label for="whyWildkidz" class="block text-xs font-tech tracking-[0.16em] text-slate-300 uppercase mb-2">
+              08. Why did you audition for WILDKIDZ? <span class="text-slate-400">*</span>
+            </label>
+            <textarea id="whyWildkidz" rows="4" class="glass-input resize-y" placeholder="Communicate your ambition, artistic vision, and why you want to build with WILDKIDZ under WOWLD..."></textarea>
+            <div id="err-whyWildkidz" class="error-msg hidden"></div>
+          </div>
+        </div>
+
+        <!-- Stage Navigation Footer -->
+        <div class="mt-9 pt-6 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+          <button type="button" onclick="navigateTo('landing')" class="w-full sm:w-auto px-6 py-3.5 rounded-full liquid-glass-subtle hover:bg-white/10 text-xs font-tech tracking-[0.18em] text-slate-300 uppercase transition-all">
+            ← BACK TO PORTAL
+          </button>
+          <button type="button" onclick="validateAndAdvance(1)" class="w-full sm:w-auto chrome-btn px-8 py-3.5 rounded-full text-xs font-tech font-bold tracking-[0.2em] text-white uppercase">
+            PROCEED TO STAGE 02 →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STAGE 02 — AUDITION SUBMISSIONS
+         =================================================================== -->
+    <section id="view-step-2" class="portal-view hidden">
+      <div class="liquid-glass rounded-[30px] sm:rounded-[36px] p-6 sm:p-10">
+        <!-- Stage Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-white/10 pb-6 mb-7 gap-2">
+          <div>
+            <div class="text-[11px] font-tech tracking-[0.28em] text-slate-400 uppercase mb-1.5">STAGE 02 OF 03 — AUDITION SUBMISSIONS</div>
+            <h2 class="font-display text-xl sm:text-3xl font-bold tracking-[0.14em] chrome-text uppercase">SHOW US YOUR TALENT.</h2>
+          </div>
+          <span class="font-cursive text-2xl sm:text-3xl text-slate-300">Performance Reels</span>
+        </div>
+
+        <!-- Mandatory Access Instructions Panel -->
+        <div class="liquid-glass-subtle rounded-2xl p-4 sm:p-5 border border-white/15 mb-8">
+          <div class="flex items-start gap-3.5">
+            <div class="w-8 h-8 rounded-full liquid-glass flex items-center justify-center shrink-0 text-slate-200">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-1.5">
+              <p class="font-tech text-[11px] tracking-[0.18em] text-white uppercase">SUBMISSION ACCESSIBILITY PROTOCOL</p>
+              <p>Both <strong class="text-white">Dance</strong> and <strong class="text-white">Vocal</strong> audition video links are strictly compulsory. Ensure your video privacy permissions (YouTube Unlisted, Google Drive "Anyone with the link", Vimeo, TikTok, etc.) are fully accessible to the WILDKIDZ management team. Do not upload photographs.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Link Inputs -->
+        <div class="space-y-6">
+          <!-- 01 — DANCE AUDITION -->
+          <div class="liquid-glass-subtle rounded-2xl p-5 sm:p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-2">
+              <label for="danceLink" class="text-xs sm:text-sm font-tech tracking-[0.18em] text-white uppercase">
+                01 — DANCE AUDITION <span class="text-slate-400">*</span>
+              </label>
+              <span class="text-[10px] font-tech tracking-widest px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300">REQUIRED LINK</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Paste a direct URL to your choreography or freestyle dance performance video.</p>
+            <input type="url" id="danceLink" class="glass-input" placeholder="https://youtu.be/... or https://drive.google.com/..." />
+            <div id="err-danceLink" class="error-msg hidden"></div>
+          </div>
+
+          <!-- 02 — VOCAL AUDITION -->
+          <div class="liquid-glass-subtle rounded-2xl p-5 sm:p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-2">
+              <label for="vocalLink" class="text-xs sm:text-sm font-tech tracking-[0.18em] text-white uppercase">
+                02 — VOCAL AUDITION <span class="text-slate-400">*</span>
+              </label>
+              <span class="text-[10px] font-tech tracking-widest px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300">REQUIRED LINK</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Paste a direct URL to your singing or rap vocal audition video (clear audio, minimal backing effects).</p>
+            <input type="url" id="vocalLink" class="glass-input" placeholder="https://youtu.be/... or https://drive.google.com/..." />
+            <div id="err-vocalLink" class="error-msg hidden"></div>
+          </div>
+        </div>
+
+        <!-- Stage Navigation Footer -->
+        <div class="mt-9 pt-6 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+          <button type="button" onclick="navigateTo('step-1')" class="w-full sm:w-auto px-6 py-3.5 rounded-full liquid-glass-subtle hover:bg-white/10 text-xs font-tech tracking-[0.18em] text-slate-300 uppercase transition-all">
+            ← STAGE 01: PROFILE
+          </button>
+          <button type="button" onclick="validateAndAdvance(2)" class="w-full sm:w-auto chrome-btn px-8 py-3.5 rounded-full text-xs font-tech font-bold tracking-[0.2em] text-white uppercase">
+            PROCEED TO STAGE 03 →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STAGE 03 — CATEGORY & MUSIC PREFERENCES
+         =================================================================== -->
+    <section id="view-step-3" class="portal-view hidden">
+      <div class="liquid-glass rounded-[30px] sm:rounded-[36px] p-6 sm:p-10">
+        <!-- Stage Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-white/10 pb-6 mb-7 gap-2">
+          <div>
+            <div class="text-[11px] font-tech tracking-[0.28em] text-slate-400 uppercase mb-1.5">STAGE 03 OF 03 — CATEGORY &amp; MUSIC PREFERENCES</div>
+            <h2 class="font-display text-xl sm:text-3xl font-bold tracking-[0.14em] chrome-text uppercase">YOUR ARTISTIC IDENTITY.</h2>
+          </div>
+          <span class="font-cursive text-2xl sm:text-3xl text-slate-300">Role &amp; Sonic Palette</span>
+        </div>
+
+        <!-- Category Selection -->
+        <div class="mb-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+            <label class="text-xs font-tech tracking-[0.18em] text-white uppercase">
+              PRIMARY POSITION CATEGORY <span class="text-slate-400">*</span>
+            </label>
+            <span class="text-xs font-medium text-slate-300 bg-white/[0.06] border border-white/15 px-3 py-1 rounded-full">
+              You may select only ONE category.
+            </span>
+          </div>
+
+          <!-- 7 Liquid Glass Single-Select Cards -->
+          <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+            <!-- Populated via JS for crisp single-select state management -->
+          </div>
+          <div id="err-category" class="error-msg hidden mt-2"></div>
+        </div>
+
+        <!-- Music Taste -->
+        <div>
+          <label for="musicTaste" class="block text-xs font-tech tracking-[0.18em] text-white uppercase mb-2">
+            MUSIC TASTE &amp; ARTISTIC INFLUENCES <span class="text-slate-400">*</span>
+          </label>
+          <p class="text-xs text-slate-400 mb-3">Describe your favourite music genres, artists, vocal/dance inspirations, and the sound you want to create.</p>
+          <textarea id="musicTaste" rows="4" class="glass-input resize-y" placeholder="List your favourite genres, defining artists, and musical influences..."></textarea>
+          <div id="err-musicTaste" class="error-msg hidden"></div>
+        </div>
+
+        <!-- Stage Navigation Footer -->
+        <div class="mt-9 pt-6 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+          <button type="button" onclick="navigateTo('step-2')" class="w-full sm:w-auto px-6 py-3.5 rounded-full liquid-glass-subtle hover:bg-white/10 text-xs font-tech tracking-[0.18em] text-slate-300 uppercase transition-all">
+            ← STAGE 02: SUBMISSIONS
+          </button>
+          <button type="button" onclick="validateAndAdvance(3)" class="w-full sm:w-auto chrome-btn px-8 py-3.5 rounded-full text-xs font-tech font-bold tracking-[0.2em] text-white uppercase">
+            REVIEW APPLICATION →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         STAGE 04 — APPLICATION REVIEW & OFFICIAL DECLARATION
+         =================================================================== -->
+    <section id="view-step-4" class="portal-view hidden">
+      <div class="liquid-glass rounded-[30px] sm:rounded-[36px] p-6 sm:p-10">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-white/10 pb-6 mb-8 gap-2">
+          <div>
+            <div class="text-[11px] font-tech tracking-[0.28em] text-slate-400 uppercase mb-1.5">FINAL VERIFICATION &amp; DECLARATION</div>
+            <h2 class="font-display text-xl sm:text-3xl font-bold tracking-[0.14em] chrome-text uppercase">REVIEW YOUR APPLICATION.</h2>
+          </div>
+          <span class="font-cursive text-2xl sm:text-3xl text-slate-300">Final Inspection</span>
+        </div>
+
+        <!-- Summary Panels -->
+        <div class="space-y-5 mb-8">
+          <!-- Personal Info Summary -->
+          <div class="liquid-glass-subtle rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center justify-between mb-4 pb-2.5 border-b border-white/10">
+              <span class="text-xs font-tech tracking-[0.18em] text-white uppercase">01 — PERSONAL INFORMATION</span>
+              <button type="button" onclick="navigateTo('step-1')" class="text-[11px] font-tech tracking-wider text-slate-300 hover:text-white underline underline-offset-4">EDIT</button>
+            </div>
+            <div id="review-personal-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-xs sm:text-sm"></div>
+          </div>
+
+          <!-- Audition Videos Summary -->
+          <div class="liquid-glass-subtle rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center justify-between mb-4 pb-2.5 border-b border-white/10">
+              <span class="text-xs font-tech tracking-[0.18em] text-white uppercase">02 — AUDITION SUBMISSIONS</span>
+              <button type="button" onclick="navigateTo('step-2')" class="text-[11px] font-tech tracking-wider text-slate-300 hover:text-white underline underline-offset-4">EDIT</button>
+            </div>
+            <div id="review-videos-grid" class="space-y-3 text-xs sm:text-sm"></div>
+          </div>
+
+          <!-- Identity & Music Summary -->
+          <div class="liquid-glass-subtle rounded-2xl p-5 border border-white/10">
+            <div class="flex items-center justify-between mb-4 pb-2.5 border-b border-white/10">
+              <span class="text-xs font-tech tracking-[0.18em] text-white uppercase">03 — ARTISTIC IDENTITY &amp; MUSIC</span>
+              <button type="button" onclick="navigateTo('step-3')" class="text-[11px] font-tech tracking-wider text-slate-300 hover:text-white underline underline-offset-4">EDIT</button>
+            </div>
+            <div id="review-identity-grid" class="space-y-3 text-xs sm:text-sm"></div>
+          </div>
+        </div>
+
+        <!-- OFFICIAL WILDKIDZ DECLARATION -->
+        <div class="liquid-glass rounded-2xl p-5 sm:p-7 border border-white/20 mb-6">
+          <h3 class="font-display text-sm sm:text-base font-bold tracking-[0.18em] chrome-text uppercase mb-4">
+            OFFICIAL WILDKIDZ DECLARATION.
+          </h3>
+          <div class="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3.5 font-light border-l-2 border-white/25 pl-4">
+            <p>WILDKIDZ is an official independent entertainment group operating under WOWLD.</p>
+            <p>By submitting this application, you acknowledge that WILDKIDZ is a serious entertainment project built on commitment, teamwork, professionalism and long-term development.</p>
+            <p>This is not a casual group or a temporary activity. We are working towards building something meaningful and bringing our creative vision to life.</p>
+            <p>Although our operations are currently online, our ambitions extend beyond the digital space.</p>
+            <p>We may not have a physical headquarters, international flights or traditional entertainment facilities at this stage, but that does not make our vision any less serious.</p>
+            <p class="text-white font-medium">We are building something real, one step at a time.</p>
+          </div>
+        </div>
+
+        <!-- Mandatory Terms Checkbox -->
+        <div id="terms-box" class="liquid-glass-subtle rounded-2xl p-4 sm:p-5 border border-white/15 mb-5 transition-all">
+          <label class="flex items-start gap-3.5 cursor-pointer select-none">
+            <input type="checkbox" id="termsAgree" class="mt-1 w-4 h-4 rounded accent-slate-200 cursor-pointer shrink-0" />
+            <span class="text-xs sm:text-sm text-slate-200 leading-snug">
+              I have read and agree to the WILDKIDZ terms and conditions.
+            </span>
+          </label>
+          <div id="err-termsAgree" class="error-msg hidden mt-2"></div>
+        </div>
+
+        <!-- Under-18 Parental / Guardian Consent Section (Shown dynamically if Age < 18) -->
+        <div id="guardian-consent-box" class="hidden liquid-glass-subtle rounded-2xl p-5 border border-amber-300/35 bg-amber-500/[0.03] mb-6 space-y-4">
+          <div class="flex items-center gap-2 text-amber-200">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span class="text-xs font-tech tracking-[0.18em] uppercase">PARENTAL / LEGAL GUARDIAN CONSENT (UNDER 18)</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Applicants under 18 require verified parent or legal guardian authorization prior to finalization.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="guardianName" class="block text-[11px] font-tech tracking-[0.15em] text-slate-300 uppercase mb-1.5">Parent / Guardian Full Name *</label>
+              <input type="text" id="guardianName" class="glass-input" placeholder="Full legal name of parent/guardian" />
+              <div id="err-guardianName" class="error-msg hidden"></div>
+            </div>
+            <div>
+              <label for="guardianContact" class="block text-[11px] font-tech tracking-[0.15em] text-slate-300 uppercase mb-1.5">Parent / Guardian Email or Phone *</label>
+              <input type="text" id="guardianContact" class="glass-input" placeholder="guardian@example.com or +1..." />
+              <div id="err-guardianContact" class="error-msg hidden"></div>
+            </div>
+          </div>
+          <div>
+            <label class="flex items-start gap-3 cursor-pointer select-none">
+              <input type="checkbox" id="guardianAgree" class="mt-1 w-4 h-4 rounded accent-amber-300 cursor-pointer shrink-0" />
+              <span class="text-xs text-slate-200">
+                I confirm that I am the parent or legal guardian of this applicant and grant permission for them to audition for WILDKIDZ under WOWLD ENTERTAINMENT.
+              </span>
+            </label>
+            <div id="err-guardianAgree" class="error-msg hidden"></div>
+          </div>
+        </div>
+
+        <!-- Final Submit Action -->
+        <div class="mt-8 pt-6 border-t border-white/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+          <button type="button" onclick="navigateTo('step-3')" class="w-full sm:w-auto px-6 py-3.5 rounded-full liquid-glass-subtle hover:bg-white/10 text-xs font-tech tracking-[0.18em] text-slate-300 uppercase transition-all">
+            ← STAGE 03: IDENTITY
+          </button>
+          <button type="button" id="submit-final-btn" onclick="submitOfficialApplication()" class="w-full sm:w-auto chrome-btn px-9 py-4 rounded-full text-xs sm:text-sm font-tech font-bold tracking-[0.2em] text-white uppercase">
+            [ SUBMIT OFFICIAL APPLICATION ]
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 5: APPLICATION CONFIRMATION SCREEN
+         =================================================================== -->
+    <section id="view-confirmation" class="portal-view hidden text-center py-4 sm:py-8">
+      <div class="liquid-glass rounded-[32px] sm:rounded-[40px] p-7 sm:p-14 relative overflow-hidden">
+        <div class="absolute inset-x-12 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/70 to-transparent"></div>
+
+        <!-- Metallic Chrome Star Constellation Visual -->
+        <div class="relative flex justify-center items-center my-4 sm:my-6">
+          <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full liquid-glass flex items-center justify-center border border-white/30 chrome-star-emblem relative">
+            <svg class="w-20 h-20 sm:w-24 sm:h-24" viewBox="0 0 120 120" fill="none">
+              <defs>
+                <linearGradient id="confirmChrome" x1="15" y1="10" x2="105" y2="110" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#FFFFFF" />
+                  <stop offset="35%" stop-color="#E2E8F0" />
+                  <stop offset="55%" stop-color="#475569" />
+                  <stop offset="80%" stop-color="#F8FAFC" />
+                  <stop offset="100%" stop-color="#CBD5E1" />
+                </linearGradient>
+              </defs>
+              <!-- Outer Orbital Ring -->
+              <ellipse cx="60" cy="60" rx="52" ry="18" transform="rotate(-24 60 60)" stroke="url(#confirmChrome)" stroke-width="1.2" stroke-opacity="0.65" />
+              <!-- Primary 4-Point Metallic Star -->
+              <path d="M60 8C63.2 41.5 78.5 56.8 112 60C78.5 63.2 63.2 78.5 60 112C56.8 78.5 41.5 63.2 8 60C41.5 56.8 56.8 41.5 60 8Z" fill="url(#confirmChrome)" />
+              <!-- Secondary Accent Star -->
+              <path d="M94 20C94.7 26.8 97.2 29.3 104 30C97.2 30.7 94.7 33.2 94 40C93.3 33.2 90.8 30.7 84 30C90.8 29.3 93.3 26.8 94 20Z" fill="#FFFFFF" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="font-display text-2xl sm:text-4xl font-bold tracking-[0.22em] chrome-text uppercase mb-2">
+          WILDKIDZ
+        </div>
+
+        <h2 class="font-tech text-sm sm:text-xl font-bold tracking-[0.26em] text-white uppercase mb-3">
+          APPLICATION RECEIVED.
+        </h2>
+
+        <p class="font-cursive text-3xl sm:text-5xl text-slate-200 mb-6">
+          Welcome to the next step.
+        </p>
+
+        <p class="max-w-lg mx-auto text-xs sm:text-base text-slate-300 leading-relaxed font-light mb-8">
+          Your audition application has been successfully submitted.
+          <br class="hidden sm:inline" />
+          Our management team will review your information and contact you using your provided contact details.
+        </p>
+
+        <!-- Unique Application Reference Number Card -->
+        <div class="max-w-md mx-auto liquid-glass-subtle rounded-2xl p-5 border border-white/25 mb-9">
+          <div class="text-[10px] font-tech tracking-[0.26em] text-slate-400 uppercase mb-2">
+            UNIQUE APPLICATION REFERENCE NUMBER
+          </div>
+          <div class="flex items-center justify-center gap-3">
+            <span id="confirm-ref-code" class="font-tech text-xl sm:text-2xl font-bold tracking-[0.18em] chrome-text select-all">
+              WKZ-2026-0000
+            </span>
+            <button type="button" onclick="copyReferenceNumber()" class="px-3 py-1.5 rounded-full liquid-glass hover:bg-white/15 text-[10px] font-tech tracking-wider text-slate-200 uppercase transition-all" title="Copy Reference Number">
+              COPY
+            </button>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2">
+            Please retain this reference code for official WILDKIDZ correspondence.
+          </div>
+        </div>
+
+        <button type="button" onclick="resetAndReturnHome()" class="px-7 py-3.5 rounded-full liquid-glass-subtle hover:bg-white/10 border border-white/20 text-xs font-tech tracking-[0.2em] text-slate-200 uppercase transition-all">
+          RETURN TO WILDKIDZ PORTAL
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 6: SECURE MANAGEMENT DASHBOARD (AUTH GATE + EXECUTIVE PANEL)
+         =================================================================== -->
+    <section id="view-management" class="portal-view hidden">
+      <!-- A. MANAGEMENT AUTHENTICATION GATE -->
+      <div id="mgmt-auth-gate" class="max-w-md mx-auto liquid-glass rounded-[32px] p-7 sm:p-10 text-center">
+        <div class="w-14 h-14 mx-auto rounded-full liquid-glass-subtle border border-white/25 flex items-center justify-center mb-5">
+          <svg class="w-6 h-6 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+
+        <div class="text-[10px] font-tech tracking-[0.28em] text-slate-400 uppercase mb-1">WOWLD ENTERTAINMENT • RESTRICTED</div>
+        <h2 class="font-display text-lg sm:text-xl font-bold tracking-[0.16em] chrome-text uppercase mb-2">
+          MANAGEMENT PORTAL
+        </h2>
+        <p class="text-xs text-slate-400 leading-relaxed mb-6">
+          Authorized WILDKIDZ executive &amp; A&amp;R personnel only. Applicant dossiers are encrypted and restricted from public access.
+        </p>
+
+        <form onsubmit="handleMgmtLogin(event)" class="space-y-4 text-left">
+          <div>
+            <label for="mgmt-passcode" class="block text-[11px] font-tech tracking-[0.18em] text-slate-300 uppercase mb-2">
+              EXECUTIVE ACCESS PASSCODE
+            </label>
+            <input type="password" id="mgmt-passcode" class="glass-input text-center tracking-[0.25em]" placeholder="••••••••" autocomplete="current-password" />
+            <div id="err-mgmt-passcode" class="error-msg hidden"></div>
+          </div>
+
+          <button type="submit" class="w-full chrome-btn py-3.5 rounded-full text-xs font-tech font-bold tracking-[0.2em] text-white uppercase">
+            AUTHENTICATE ACCESS
+          </button>
+        </form>
+
+        <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+          <button type="button" onclick="navigateTo('landing')" class="hover:text-white transition-colors">← Return to Auditions</button>
+          <span class="font-mono text-[10px] text-slate-500">KEY: WOWLD2026</span>
+        </div>
+      </div>
+
+      <!-- B. AUTHENTICATED EXECUTIVE MANAGEMENT DASHBOARD -->
+      <div id="mgmt-dashboard-panel" class="hidden space-y-6">
+        <!-- Dashboard Header -->
+        <div class="liquid-glass rounded-[28px] p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[10px] font-tech tracking-[0.26em] text-slate-400 uppercase">WOWLD A&amp;R EXECUTIVE SYSTEM</span>
+            </div>
+            <h2 class="font-display text-lg sm:text-2xl font-bold tracking-[0.15em] chrome-text uppercase mt-1">
+              WILDKIDZ AUDITION ROSTER
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <button type="button" onclick="navigateTo('landing')" class="px-4 py-2 rounded-full liquid-glass-subtle hover:bg-white/10 text-[11px] font-tech tracking-wider text-slate-300 uppercase">
+              AUDITION VIEW
+            </button>
+            <button type="button" onclick="logoutManagement()" class="px-4 py-2 rounded-full bg-red-500/15 hover:bg-red-500/25 border border-red-400/30 text-[11px] font-tech tracking-wider text-red-200 uppercase transition-all">
+              LOCK PORTAL
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Metrics Bar -->
+        <div id="mgmt-metrics-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="liquid-glass rounded-[26px] p-4 sm:p-6 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <!-- Search Input -->
+            <div class="md:col-span-2 relative">
+              <input type="text" id="mgmt-search" oninput="renderManagementList()" class="glass-input pl-10" placeholder="Search by Name, Reference # (WKZ-...), Country, or Music Taste..." />
+              <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <!-- Category Filter Dropdown -->
+            <div>
+              <select id="mgmt-category-filter" onchange="renderManagementList()" class="glass-input bg-[#080a12] cursor-pointer">
+                <option value="ALL">All Categories</option>
+                <option value="Vocalist">Vocalist</option>
+                <option value="Lead Vocalist">Lead Vocalist</option>
+                <option value="Rapper">Rapper</option>
+                <option value="Main Dancer">Main Dancer</option>
+                <option value="Lead Dancer">Lead Dancer</option>
+                <option value="Visual">Visual</option>
+                <option value="Leader">Leader</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Status Filter Pills -->
+          <div class="flex flex-wrap items-center gap-2" id="mgmt-status-pills">
+            <button type="button" data-status-filter="ALL" onclick="setStatusFilter('ALL')" class="status-pill active px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/30 bg-white/15 text-white">ALL</button>
+            <button type="button" data-status-filter="Submitted" onclick="setStatusFilter('Submitted')" class="status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400">SUBMITTED</button>
+            <button type="button" data-status-filter="Under Review" onclick="setStatusFilter('Under Review')" class="status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400">UNDER REVIEW</button>
+            <button type="button" data-status-filter="Shortlisted" onclick="setStatusFilter('Shortlisted')" class="status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400">SHORTLISTED</button>
+            <button type="button" data-status-filter="Accepted" onclick="setStatusFilter('Accepted')" class="status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400">ACCEPTED</button>
+            <button type="button" data-status-filter="Declined" onclick="setStatusFilter('Declined')" class="status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400">DECLINED</button>
+          </div>
+        </div>
+
+        <!-- Applicant Dossiers List -->
+        <div id="mgmt-applicants-container" class="space-y-4">
+          <div class="liquid-glass rounded-2xl p-10 text-center text-sm text-slate-400">
+            Synchronizing encrypted WILDKIDZ audition records...
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       APPLICANT DOSSIER DETAIL MODAL (MANAGEMENT)
+       ===================================================================== -->
+  <div id="dossier-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="liquid-glass rounded-[30px] max-w-2xl w-full max-h-[88vh] overflow-y-auto p-6 sm:p-8 relative border border-white/25">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4 mb-5">
+        <div>
+          <div id="modal-ref" class="text-[11px] font-tech tracking-[0.22em] text-slate-400 uppercase">WKZ-2026-0000</div>
+          <h3 id="modal-name" class="font-display text-xl sm:text-2xl font-bold chrome-text uppercase mt-1">APPLICANT NAME</h3>
+        </div>
+        <button type="button" onclick="closeDossierModal()" class="w-9 h-9 rounded-full liquid-glass-subtle hover:bg-white/15 flex items-center justify-center text-slate-300 hover:text-white">
+          ✕
+        </button>
+      </div>
+
+      <div id="modal-body" class="space-y-5 text-xs sm:text-sm"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION LOGIC & FIREBASE FIRESTORE INTEGRATION
+       ===================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // -----------------------------------------------------------------------
+    // 1. FIREBASE INITIALIZATION & AUTHENTICATION
+    // -----------------------------------------------------------------------
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'wildkidz-auditions-default';
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let applicationsCache = [];
+    let unsubscribeSnapshot = null;
+
+    async function initFirebase() {
+      try {
+        if (typeof __firebase_config === 'undefined') {
+          console.warn('Firebase config not found in environment; running with in-memory fallback.');
+          return;
+        }
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          currentUser = user;
+          if (user && isMgmtAuthenticated) {
+            subscribeToApplications();
+          }
+        });
+      } catch (err) {
+        console.error('Firebase initialization error:', err);
+      }
+    }
+
+    initFirebase();
+
+    // -----------------------------------------------------------------------
+    // 2. APPLICATION STATE & CATEGORY DEFINITIONS
+    // -----------------------------------------------------------------------
+    const CATEGORIES = [
+      { name: 'Vocalist', subtitle: 'Core vocal timbre, stability & emotional delivery' },
+      { name: 'Lead Vocalist', subtitle: 'Dynamic range, melodic anchor & harmonic control' },
+      { name: 'Rapper', subtitle: 'Rhythmic cadence, lyricism & commanding flow' },
+      { name: 'Main Dancer', subtitle: 'Precision choreography, isolation & stage dominance' },
+      { name: 'Lead Dancer', subtitle: 'Fluidity, musicality & sharp ensemble synchronization' },
+      { name: 'Visual', subtitle: 'Iconic presence, camera magnetism & editorial poise' },
+      { name: 'Leader', subtitle: 'Strategic direction, team cohesion & calm authority' }
+    ];
+
+    const STATUS_OPTIONS = ['Submitted', 'Under Review', 'Shortlisted', 'Accepted', 'Declined'];
+
+    let currentView = 'landing';
+    let selectedCategory = '';
+    let isSubmitting = false;
+    let hasSubmittedCurrentSession = false;
+    let isMgmtAuthenticated = false;
+    let currentStatusFilter = 'ALL';
+
+    // Render 7 Category Liquid Glass Cards
+    function renderCategoryCards() {
+      const grid = document.getElementById('category-grid');
+      grid.innerHTML = CATEGORIES.map((cat) => {
+        const isSelected = selectedCategory === cat.name;
+        return `
+          <div
+            role="radio"
+            aria-checked="${isSelected}"
+            tabindex="0"
+            onclick="selectCategory('${cat.name}')"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCategory('${cat.name}');}"
+            class="category-card ${isSelected ? 'selected' : ''}"
+          >
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-tech text-xs sm:text-sm font-bold tracking-[0.14em] ${isSelected ? 'chrome-text' : 'text-slate-100'} uppercase">
+                ${cat.name}
+              </span>
+              <span class="w-4 h-4 rounded-full border ${isSelected ? 'border-white bg-white shadow-[0_0_10px_#fff]' : 'border-white/30 bg-transparent'} flex items-center justify-center transition-all">
+                ${isSelected ? '<span class="w-1.5 h-1.5 rounded-full bg-slate-950"></span>' : ''}
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 leading-snug">${cat.subtitle}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.selectCategory = function(catName) {
+      selectedCategory = catName;
+      renderCategoryCards();
+      clearFieldError('category');
+      evaluateVignetteState();
+    };
+
+    renderCategoryCards();
+
+    // -----------------------------------------------------------------------
+    // 3. NAVIGATION & PROGRESS PILLS
+    // -----------------------------------------------------------------------
+    window.navigateTo = function(viewName) {
+      currentView = viewName;
+      const views = ['landing', 'step-1', 'step-2', 'step-3', 'step-4', 'confirmation', 'management'];
+      views.forEach((v) => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
+      // Update Navigation Progress Pills visibility & active highlight
+      const desktopProg = document.getElementById('nav-progress-bar');
+      const mobileProg = document.getElementById('mobile-progress-bar');
+      const isStepView = viewName.startsWith('step-');
+
+      if (isStepView) {
+        desktopProg.classList.remove('hidden');
+        desktopProg.classList.add('flex');
+        mobileProg.classList.remove('hidden');
+        mobileProg.classList.add('flex');
+
+        const stepNum = parseInt(viewName.replace('step-', ''), 10);
+        document.querySelectorAll('.nav-step-pill').forEach((pill) => {
+          const pillStep = parseInt(pill.getAttribute('data-nav-step'), 10);
+          if (pillStep === stepNum) {
+            pill.className = 'nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all bg-white/15 text-white border border-white/30 shadow-[0_0_14px_rgba(255,255,255,0.15)]';
+          } else if (pillStep < stepNum) {
+            pill.className = 'nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-200 hover:bg-white/10';
+          } else {
+            pill.className = 'nav-step-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider transition-all text-slate-500';
+          }
+        });
+      } else {
+        desktopProg.classList.add('hidden');
+        desktopProg.classList.remove('flex');
+        mobileProg.classList.add('hidden');
+        mobileProg.classList.remove('flex');
+      }
+
+      // Clear red edge vignette when switching views cleanly
+      setRedWarningVignette(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewName === 'step-4') {
+        populateReviewSummary();
+      }
+      if (viewName === 'management' && isMgmtAuthenticated) {
+        subscribeToApplications();
+      }
+    };
+
+    window.startAudition = function() {
+      if (hasSubmittedCurrentSession) {
+        hasSubmittedCurrentSession = false;
+      }
+      navigateTo('step-1');
+    };
+
+    // Enforce No-Skipping rule on top progress bar clicks
+    window.attemptStepJump = function(targetStep) {
+      const currentStepNum = currentView.startsWith('step-') ? parseInt(currentView.replace('step-', ''), 10) : 1;
+      if (targetStep <= currentStepNum) {
+        navigateTo(`step-${targetStep}`);
+        return;
+      }
+      // Validate sequentially up to targetStep - 1
+      for (let s = currentStepNum; s < targetStep; s++) {
+        if (!runStepValidation(s)) {
+          showToast('Complete all required fields before advancing.', 'error');
+          return;
+        }
+      }
+      navigateTo(`step-${targetStep}`);
+    };
+
+    // -----------------------------------------------------------------------
+    // 4. CINEMATIC RED ERROR & STRICT VALIDATION SYSTEM
+    // -----------------------------------------------------------------------
+    function setRedWarningVignette(active) {
+      const vignette = document.getElementById('red-warning-vignette');
+      if (active) {
+        vignette.classList.add('active');
+      } else {
+        vignette.classList.remove('active');
+      }
+    }
+
+    function showFieldError(fieldId, message, containerId = null) {
+      const inputEl = document.getElementById(containerId || fieldId);
+      const errEl = document.getElementById(`err-${fieldId}`);
+      if (inputEl) {
+        inputEl.classList.remove('field-error');
+        void inputEl.offsetWidth; // trigger reflow so shake animation replays
+        inputEl.classList.add('field-error');
+      }
+      if (errEl) {
+        errEl.innerHTML = `<svg class="w-3.5 h-3.5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span>${message}</span>`;
+        errEl.classList.remove('hidden');
+      }
+      setRedWarningVignette(true);
+    }
+
+    function clearFieldError(fieldId, containerId = null) {
+      const inputEl = document.getElementById(containerId || fieldId);
+      const errEl = document.getElementById(`err-${fieldId}`);
+      if (inputEl) {
+        inputEl.classList.remove('field-error');
+      }
+      if (errEl) {
+        errEl.classList.add('hidden');
+        errEl.innerHTML = '';
+      }
+      evaluateVignetteState();
+    }
+
+    function evaluateVignetteState() {
+      const visibleErrors = document.querySelectorAll('.error-msg:not(.hidden)');
+      if (visibleErrors.length === 0) {
+        setRedWarningVignette(false);
+      }
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+    }
+
+    function isValidUrl(urlStr) {
+      try {
+        const parsed = new URL(urlStr.trim());
+        return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && parsed.hostname.includes('.');
+      } catch {
+        return false;
+      }
+    }
+
+    function runStepValidation(stepNum) {
+      let valid = true;
+      let firstErrorEl = null;
+
+      const recordError = (fieldId, msg, containerId = null) => {
+        showFieldError(fieldId, msg, containerId);
+        if (!firstErrorEl) {
+          firstErrorEl = document.getElementById(containerId || fieldId);
+        }
+        valid = false;
+      };
+
+      if (stepNum === 1) {
+        const fullName = document.getElementById('fullName').value.trim();
+        const ageVal = document.getElementById('age').value.trim();
+        const ageNum = Number(ageVal);
+        const birthday = document.getElementById('birthday').value.trim();
+        const height = document.getElementById('height').value.trim();
+        const country = document.getElementById('country').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const whyWildkidz = document.getElementById('whyWildkidz').value.trim();
+
+        if (!fullName) {
+          recordError('fullName', 'Please enter your full name. This field cannot be skipped.');
+        }
+        if (!ageVal || isNaN(ageNum) || ageNum < 8 || ageNum > 80) {
+          recordError('age', 'Please enter a valid numeric age.');
+        }
+        if (!birthday) {
+          recordError('birthday', 'Please provide your birthday.');
+        }
+        if (!height) {
+          recordError('height', 'Please enter your height (e.g., 174 cm or 5\'8").');
+        }
+        if (!country) {
+          recordError('country', 'Please specify your country of residence.');
+        }
+        if (!email) {
+          recordError('email', 'Your email address is required.');
+        } else if (!isValidEmail(email)) {
+          recordError('email', 'Please enter a valid email address format (e.g., name@domain.com).');
+        }
+        if (!phone || phone.replace(/\D/g, '').length < 6) {
+          recordError('phone', 'Please provide a valid alternative phone number.');
+        }
+        if (!whyWildkidz) {
+          recordError('whyWildkidz', 'Please explain why you auditioned for WILDKIDZ. This field cannot be skipped.');
+        } else if (whyWildkidz.length < 15) {
+          recordError('whyWildkidz', 'Please write a clear, meaningful explanation (at least 15 characters).');
+        }
+      }
+
+      if (stepNum === 2) {
+        const danceLink = document.getElementById('danceLink').value.trim();
+        const vocalLink = document.getElementById('vocalLink').value.trim();
+
+        if (!danceLink) {
+          recordError('danceLink', 'Please submit your dance audition link.');
+        } else if (!isValidUrl(danceLink)) {
+          recordError('danceLink', 'Please enter a valid accessible URL starting with https:// or http://.');
+        }
+
+        if (!vocalLink) {
+          recordError('vocalLink', 'Please submit your vocal audition link.');
+        } else if (!isValidUrl(vocalLink)) {
+          recordError('vocalLink', 'Please enter a valid accessible URL starting with https:// or http://.');
+        }
+      }
+
+      if (stepNum === 3) {
+        const musicTaste = document.getElementById('musicTaste').value.trim();
+
+        if (!selectedCategory) {
+          recordError('category', 'Please select one category.', 'category-grid');
+        }
+        if (!musicTaste) {
+          recordError('musicTaste', 'Please describe your favourite music genres, artists, and influences.');
+        } else if (musicTaste.length < 8) {
+          recordError('musicTaste', 'Please provide a more detailed description of your musical taste.');
+        }
+      }
+
+      if (!valid && firstErrorEl) {
+        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return valid;
+    }
+
+    window.validateAndAdvance = function(currentStep) {
+      if (!runStepValidation(currentStep)) {
+        return;
+      }
+      setRedWarningVignette(false);
+      navigateTo(`step-${currentStep + 1}`);
+    };
+
+    // Attach real-time input listeners so red warnings clear smoothly upon correction
+    const watchedFields = [
+      'fullName', 'age', 'birthday', 'height', 'country', 'email', 'phone', 'whyWildkidz',
+      'danceLink', 'vocalLink', 'musicTaste', 'guardianName', 'guardianContact'
+    ];
+
+    watchedFields.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        if (id === 'age') {
+          const ageNum = Number(el.value);
+          const minorBanner = document.getElementById('minor-notice-banner');
+          if (el.value && !isNaN(ageNum) && ageNum < 18) {
+            minorBanner.classList.remove('hidden');
+          } else {
+            minorBanner.classList.add('hidden');
+          }
+        }
+        clearFieldError(id);
+      });
+    });
+
+    document.getElementById('termsAgree').addEventListener('change', (e) => {
+      if (e.target.checked) clearFieldError('termsAgree', 'terms-box');
+    });
+
+    document.getElementById('guardianAgree').addEventListener('change', (e) => {
+      if (e.target.checked) clearFieldError('guardianAgree', 'guardian-consent-box');
+    });
+
+    // -----------------------------------------------------------------------
+    // 5. REVIEW SUMMARY & OFFICIAL SUBMISSION
+    // -----------------------------------------------------------------------
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function populateReviewSummary() {
+      const ageNum = Number(document.getElementById('age').value.trim());
+      const isMinor = !isNaN(ageNum) && ageNum < 18;
+
+      const guardianBox = document.getElementById('guardian-consent-box');
+      if (isMinor) {
+        guardianBox.classList.remove('hidden');
+      } else {
+        guardianBox.classList.add('hidden');
+      }
+
+      const personalItems = [
+        { label: 'Full Name', value: document.getElementById('fullName').value.trim() },
+        { label: 'Age', value: `${ageNum} years old ${isMinor ? '(Under 18)' : ''}` },
+        { label: 'Birthday', value: document.getElementById('birthday').value.trim() },
+        { label: 'Height', value: document.getElementById('height').value.trim() },
+        { label: 'Country', value: document.getElementById('country').value.trim() },
+        { label: 'Email Address', value: document.getElementById('email').value.trim() },
+        { label: 'Phone Number', value: document.getElementById('phone').value.trim() },
+      ];
+
+      document.getElementById('review-personal-grid').innerHTML =
+        personalItems.map((item) => `
+          <div>
+            <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">${item.label}</div>
+            <div class="text-slate-100 font-medium mt-0.5 break-words">${escapeHtml(item.value)}</div>
+          </div>
+        `).join('') +
+        `<div class="sm:col-span-2 pt-2 border-t border-white/5">
+          <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">Why WILDKIDZ?</div>
+          <div class="text-slate-200 mt-1 leading-relaxed whitespace-pre-line">${escapeHtml(document.getElementById('whyWildkidz').value.trim())}</div>
+        </div>`;
+
+      const danceUrl = document.getElementById('danceLink').value.trim();
+      const vocalUrl = document.getElementById('vocalLink').value.trim();
+
+      document.getElementById('review-videos-grid').innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/10">
+          <div>
+            <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">01 — Dance Audition Video</div>
+            <div class="text-slate-200 truncate max-w-md mt-0.5">${escapeHtml(danceUrl)}</div>
+          </div>
+          <a href="${escapeHtml(danceUrl)}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-tech tracking-wider text-white underline underline-offset-4 shrink-0">TEST LINK ↗</a>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/10">
+          <div>
+            <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">02 — Vocal Audition Video</div>
+            <div class="text-slate-200 truncate max-w-md mt-0.5">${escapeHtml(vocalUrl)}</div>
+          </div>
+          <a href="${escapeHtml(vocalUrl)}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-tech tracking-wider text-white underline underline-offset-4 shrink-0">TEST LINK ↗</a>
+        </div>
+      `;
+
+      document.getElementById('review-identity-grid').innerHTML = `
+        <div>
+          <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">Selected Category</div>
+          <div class="inline-block mt-1 px-3.5 py-1 rounded-full bg-white/15 border border-white/30 font-tech text-xs font-bold tracking-wider text-white uppercase">
+            ${escapeHtml(selectedCategory)}
+          </div>
+        </div>
+        <div class="pt-2 border-t border-white/5">
+          <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase">Music Taste &amp; Influences</div>
+          <div class="text-slate-200 mt-1 leading-relaxed whitespace-pre-line">${escapeHtml(document.getElementById('musicTaste').value.trim())}</div>
+        </div>
+      `;
+    }
+
+    function generateReferenceNumber() {
+      const year = new Date().getFullYear();
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return `WKZ-${year}-${code}`;
+    }
+
+    window.submitOfficialApplication = async function() {
+      if (isSubmitting || hasSubmittedCurrentSession) return;
+
+      // Re-verify all 3 stages before final submission
+      if (!runStepValidation(1)) { navigateTo('step-1'); return; }
+      if (!runStepValidation(2)) { navigateTo('step-2'); return; }
+      if (!runStepValidation(3)) { navigateTo('step-3'); return; }
+
+      let finalValid = true;
+      const termsChecked = document.getElementById('termsAgree').checked;
+      if (!termsChecked) {
+        showFieldError('termsAgree', 'You must read and agree to the WILDKIDZ terms and conditions before submitting.', 'terms-box');
+        finalValid = false;
+      }
+
+      const ageNum = Number(document.getElementById('age').value.trim());
+      const isMinor = !isNaN(ageNum) && ageNum < 18;
+      let guardianName = '';
+      let guardianContact = '';
+
+      if (isMinor) {
+        guardianName = document.getElementById('guardianName').value.trim();
+        guardianContact = document.getElementById('guardianContact').value.trim();
+        const guardianChecked = document.getElementById('guardianAgree').checked;
+
+        if (!guardianName) {
+          showFieldError('guardianName', 'Parent or legal guardian full name is required for applicants under 18.');
+          finalValid = false;
+        }
+        if (!guardianContact) {
+          showFieldError('guardianContact', 'Parent or legal guardian email or phone contact is required.');
+          finalValid = false;
+        }
+        if (!guardianChecked) {
+          showFieldError('guardianAgree', 'Parental/guardian consent confirmation must be checked.', 'guardian-consent-box');
+          finalValid = false;
+        }
+      }
+
+      if (!finalValid) return;
+
+      // Lock submit button to prevent duplicate submissions
+      isSubmitting = true;
+      const submitBtn = document.getElementById('submit-final-btn');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'TRANSMITTING APPLICATION...';
+
+      const referenceNumber = generateReferenceNumber();
+      const payload = {
+        referenceNumber,
+        fullName: document.getElementById('fullName').value.trim(),
+        age: ageNum,
+        isMinor,
+        guardianName: isMinor ? guardianName : '',
+        guardianContact: isMinor ? guardianContact : '',
+        birthday: document.getElementById('birthday').value.trim(),
+        height: document.getElementById('height').value.trim(),
+        country: document.getElementById('country').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        whyWildkidz: document.getElementById('whyWildkidz').value.trim(),
+        danceLink: document.getElementById('danceLink').value.trim(),
+        vocalLink: document.getElementById('vocalLink').value.trim(),
+        category: selectedCategory,
+        musicTaste: document.getElementById('musicTaste').value.trim(),
+        termsAccepted: true,
+        status: 'Submitted',
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        if (db && currentUser) {
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'wildkidz_applications', referenceNumber);
+          await setDoc(docRef, payload);
+        } else {
+          // Fallback local session cache if Firebase is unavailable
+          applicationsCache.unshift(payload);
+        }
+
+        hasSubmittedCurrentSession = true;
+        document.getElementById('confirm-ref-code').textContent = referenceNumber;
+        setRedWarningVignette(false);
+        navigateTo('confirmation');
+      } catch (err) {
+        console.error('Error saving audition application:', err);
+        showToast('Network interruption while saving application. Please try again.', 'error');
+      } finally {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    };
+
+    window.copyReferenceNumber = function() {
+      const code = document.getElementById('confirm-ref-code').textContent.trim();
+      const tempInput = document.createElement('textarea');
+      tempInput.value = code;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast(`Copied ${code} to clipboard.`, 'success');
+      } catch {
+        showToast('Unable to copy automatically. Please select and copy the code.', 'info');
+      }
+      document.body.removeChild(tempInput);
+    };
+
+    window.resetAndReturnHome = function() {
+      watchedFields.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('termsAgree').checked = false;
+      document.getElementById('guardianAgree').checked = false;
+      document.getElementById('minor-notice-banner').classList.add('hidden');
+      selectedCategory = '';
+      renderCategoryCards();
+      hasSubmittedCurrentSession = false;
+      navigateTo('landing');
+    };
+
+    // -----------------------------------------------------------------------
+    // 6. SECURE MANAGEMENT DASHBOARD (AUTH & REAL-TIME FIRESTORE)
+    // -----------------------------------------------------------------------
+    const MGMT_PASSCODE = 'WOWLD2026';
+
+    window.handleMgmtLogin = function(e) {
+      e.preventDefault();
+      const passInput = document.getElementById('mgmt-passcode');
+      const code = passInput.value.trim();
+
+      if (code === MGMT_PASSCODE) {
+        isMgmtAuthenticated = true;
+        passInput.value = '';
+        clearFieldError('mgmt-passcode');
+        setRedWarningVignette(false);
+
+        document.getElementById('mgmt-auth-gate').classList.add('hidden');
+        document.getElementById('mgmt-dashboard-panel').classList.remove('hidden');
+        subscribeToApplications();
+        showToast('Executive Management Portal Unlocked.', 'success');
+      } else {
+        showFieldError('mgmt-passcode', 'Invalid executive passcode. Unauthorized access denied.');
+      }
+    };
+
+    window.logoutManagement = function() {
+      isMgmtAuthenticated = false;
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+      document.getElementById('mgmt-dashboard-panel').classList.add('hidden');
+      document.getElementById('mgmt-auth-gate').classList.remove('hidden');
+      showToast('Management Portal Locked.', 'info');
+    };
+
+    function subscribeToApplications() {
+      if (!db || !currentUser) {
+        renderManagementDashboard();
+        return;
+      }
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+
+      const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'wildkidz_applications');
+      unsubscribeSnapshot = onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list = [];
+          snapshot.forEach((docSnap) => {
+            list.push(docSnap.data());
+          });
+          // Sort newest first in JS memory
+          list.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+          applicationsCache = list;
+          renderManagementDashboard();
+        },
+        (error) => {
+          console.error('Firestore subscription error:', error);
+          showToast('Unable to sync live roster data.', 'error');
+        }
+      );
+    }
+
+    function renderManagementDashboard() {
+      renderMetricsBar();
+      renderManagementList();
+    }
+
+    function renderMetricsBar() {
+      const counts = {
+        Total: applicationsCache.length,
+        Submitted: applicationsCache.filter(a => a.status === 'Submitted').length,
+        'Under Review': applicationsCache.filter(a => a.status === 'Under Review').length,
+        Shortlisted: applicationsCache.filter(a => a.status === 'Shortlisted').length,
+        Accepted: applicationsCache.filter(a => a.status === 'Accepted').length,
+        Declined: applicationsCache.filter(a => a.status === 'Declined').length,
+      };
+
+      const cards = [
+        { label: 'TOTAL', count: counts.Total, accent: 'text-white' },
+        { label: 'SUBMITTED', count: counts.Submitted, accent: 'text-slate-200' },
+        { label: 'UNDER REVIEW', count: counts['Under Review'], accent: 'text-sky-300' },
+        { label: 'SHORTLISTED', count: counts.Shortlisted, accent: 'text-amber-300' },
+        { label: 'ACCEPTED', count: counts.Accepted, accent: 'text-emerald-300' },
+        { label: 'DECLINED', count: counts.Declined, accent: 'text-rose-300' },
+      ];
+
+      document.getElementById('mgmt-metrics-bar').innerHTML = cards.map(c => `
+        <div class="liquid-glass-subtle rounded-2xl p-3.5 sm:p-4 border border-white/10 text-center">
+          <div class="font-tech text-xl sm:text-2xl font-bold ${c.accent}">${c.count}</div>
+          <div class="text-[9px] sm:text-[10px] font-tech tracking-[0.18em] text-slate-400 mt-1">${c.label}</div>
+        </div>
+      `).join('');
+    }
+
+    window.setStatusFilter = function(status) {
+      currentStatusFilter = status;
+      document.querySelectorAll('.status-pill').forEach((btn) => {
+        const isMatch = btn.getAttribute('data-status-filter') === status;
+        btn.className = isMatch
+          ? 'status-pill active px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/35 bg-white/15 text-white'
+          : 'status-pill px-3.5 py-1.5 rounded-full text-[11px] font-tech tracking-wider border border-white/10 bg-white/[0.03] text-slate-400 hover:text-slate-200';
+      });
+      renderManagementList();
+    };
+
+    window.renderManagementList = function() {
+      const container = document.getElementById('mgmt-applicants-container');
+      const query = (document.getElementById('mgmt-search').value || '').trim().toLowerCase();
+      const catFilter = document.getElementById('mgmt-category-filter').value;
+
+      const filtered = applicationsCache.filter((app) => {
+        const matchesStatus = currentStatusFilter === 'ALL' || app.status === currentStatusFilter;
+        const matchesCat = catFilter === 'ALL' || app.category === catFilter;
+        const matchesQuery = !query ||
+          (app.fullName || '').toLowerCase().includes(query) ||
+          (app.referenceNumber || '').toLowerCase().includes(query) ||
+          (app.country || '').toLowerCase().includes(query) ||
+          (app.musicTaste || '').toLowerCase().includes(query) ||
+          (app.email || '').toLowerCase().includes(query);
+
+        return matchesStatus && matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="liquid-glass rounded-3xl p-10 text-center">
+            <div class="font-tech text-xs tracking-[0.22em] text-slate-300 uppercase mb-1">NO MATCHING APPLICATIONS</div>
+            <p class="text-xs text-slate-400">No audition submissions match your current search or filter criteria.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map((app) => {
+        const statusBadgeStyles = {
+          'Submitted': 'bg-white/10 text-slate-200 border-white/20',
+          'Under Review': 'bg-sky-500/15 text-sky-200 border-sky-400/30',
+          'Shortlisted': 'bg-amber-500/15 text-amber-200 border-amber-400/35',
+          'Accepted': 'bg-emerald-500/15 text-emerald-200 border-emerald-400/35',
+          'Declined': 'bg-rose-500/15 text-rose-200 border-rose-400/30',
+        }[app.status] || 'bg-white/10 text-slate-200 border-white/20';
+
+        const dateFormatted = app.submittedAt
+          ? new Date(app.submittedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+          : '';
+
+        return `
+          <div class="liquid-glass rounded-3xl p-5 sm:p-6 border border-white/15 space-y-4">
+            <!-- Top Row: Ref, Name, Category & Status Selector -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-white/10 pb-4">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-tech text-[11px] tracking-[0.18em] text-slate-400">${escapeHtml(app.referenceNumber)}</span>
+                  <span class="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 font-tech text-[10px] tracking-wider text-white uppercase">${escapeHtml(app.category)}</span>
+                  ${app.isMinor ? '<span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/35 font-tech text-[10px] tracking-wider text-amber-200 uppercase">UNDER 18</span>' : ''}
+                  <span class="text-[11px] text-slate-500">${dateFormatted}</span>
+                </div>
+                <h3 class="font-display text-base sm:text-lg font-bold text-white tracking-wider mt-1.5">
+                  ${escapeHtml(app.fullName)}
+                  <span class="font-sans text-xs font-normal text-slate-400 ml-2">• ${escapeHtml(app.age)} yrs • ${escapeHtml(app.country)}</span>
+                </h3>
+              </div>
+
+              <!-- Status Updater Dropdown -->
+              <div class="flex items-center gap-2.5">
+                <span class="px-3 py-1 rounded-full text-[10px] font-tech tracking-wider border ${statusBadgeStyles} uppercase">
+                  ${escapeHtml(app.status)}
+                </span>
+                <select
+                  aria-label="Update status for ${escapeHtml(app.fullName)}"
+                  onchange="updateApplicantStatus('${escapeHtml(app.referenceNumber)}', this.value)"
+                  class="bg-[#090c16] border border-white/20 rounded-full px-3.5 py-1.5 text-xs text-slate-200 font-tech tracking-wider focus:outline-none focus:border-white/50 cursor-pointer"
+                >
+                  ${STATUS_OPTIONS.map(st => `<option value="${st}" ${app.status === st ? 'selected' : ''}>${st}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+
+            <!-- Middle Row: Why WILDKIDZ Excerpt & Music Taste -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="liquid-glass-subtle rounded-2xl p-3.5 border border-white/5">
+                <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase mb-1">AUDITION STATEMENT</div>
+                <p class="text-slate-200 line-clamp-2 leading-relaxed">${escapeHtml(app.whyWildkidz)}</p>
+              </div>
+              <div class="liquid-glass-subtle rounded-2xl p-3.5 border border-white/5">
+                <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase mb-1">MUSIC TASTE &amp; INFLUENCES</div>
+                <p class="text-slate-200 line-clamp-2 leading-relaxed">${escapeHtml(app.musicTaste)}</p>
+              </div>
+            </div>
+
+            <!-- Bottom Row: Audition Video Links & Full Dossier Trigger -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+              <div class="flex flex-wrap items-center gap-2.5">
+                <a href="${escapeHtml(app.danceLink)}" target="_blank" rel="noopener noreferrer" class="chrome-btn px-4 py-2 rounded-full text-[11px] font-tech font-semibold tracking-wider text-white uppercase inline-flex items-center gap-1.5">
+                  <span>OPEN DANCE VIDEO ↗</span>
+                </a>
+                <a href="${escapeHtml(app.vocalLink)}" target="_blank" rel="noopener noreferrer" class="chrome-btn px-4 py-2 rounded-full text-[11px] font-tech font-semibold tracking-wider text-white uppercase inline-flex items-center gap-1.5">
+                  <span>OPEN VOCAL VIDEO ↗</span>
+                </a>
+              </div>
+
+              <button type="button" onclick="openDossierModal('${escapeHtml(app.referenceNumber)}')" class="px-4 py-2 rounded-full liquid-glass-subtle hover:bg-white/15 border border-white/15 text-[11px] font-tech tracking-wider text-slate-200 uppercase transition-all">
+                FULL DOSSIER
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    window.updateApplicantStatus = async function(refNum, newStatus) {
+      try {
+        if (db && currentUser) {
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'wildkidz_applications', refNum);
+          await updateDoc(docRef, { status: newStatus });
+        } else {
+          const target = applicationsCache.find(a => a.referenceNumber === refNum);
+          if (target) target.status = newStatus;
+          renderManagementDashboard();
+        }
+        showToast(`Status updated to "${newStatus}" for ${refNum}.`, 'success');
+      } catch (err) {
+        console.error('Status update failed:', err);
+        showToast('Failed to update applicant status.', 'error');
+      }
+    };
+
+    window.openDossierModal = function(refNum) {
+      const app = applicationsCache.find(a => a.referenceNumber === refNum);
+      if (!app) return;
+
+      document.getElementById('modal-ref').textContent = `${app.referenceNumber} • ${app.status.toUpperCase()}`;
+      document.getElementById('modal-name').textContent = app.fullName;
+
+      document.getElementById('modal-body').innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 liquid-glass-subtle rounded-2xl p-4 border border-white/10">
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">CATEGORY</div>
+            <div class="text-white font-semibold mt-0.5">${escapeHtml(app.category)}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">AGE / BIRTHDAY</div>
+            <div class="text-slate-200 mt-0.5">${escapeHtml(app.age)} yrs (${escapeHtml(app.birthday)})</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">HEIGHT</div>
+            <div class="text-slate-200 mt-0.5">${escapeHtml(app.height)}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">COUNTRY</div>
+            <div class="text-slate-200 mt-0.5">${escapeHtml(app.country)}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">EMAIL</div>
+            <div class="text-slate-200 mt-0.5 break-all">${escapeHtml(app.email)}</div>
+          </div>
+          <div>
+            <div class="text-[10px] font-tech text-slate-400 uppercase">PHONE</div>
+            <div class="text-slate-200 mt-0.5">${escapeHtml(app.phone)}</div>
+          </div>
+        </div>
+
+        ${app.isMinor ? `
+          <div class="liquid-glass-subtle rounded-2xl p-4 border border-amber-400/30 bg-amber-500/[0.04]">
+            <div class="text-[10px] font-tech tracking-wider text-amber-200 uppercase mb-1">PARENTAL / GUARDIAN CONSENT VERIFIED</div>
+            <div class="text-slate-200">Guardian: <strong>${escapeHtml(app.guardianName)}</strong> • Contact: ${escapeHtml(app.guardianContact)}</div>
+          </div>
+        ` : ''}
+
+        <div class="liquid-glass-subtle rounded-2xl p-4 border border-white/10">
+          <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase mb-1.5">WHY DID YOU AUDITION FOR WILDKIDZ?</div>
+          <p class="text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(app.whyWildkidz)}</p>
+        </div>
+
+        <div class="liquid-glass-subtle rounded-2xl p-4 border border-white/10">
+          <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase mb-1.5">MUSIC TASTE &amp; ARTISTIC INFLUENCES</div>
+          <p class="text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(app.musicTaste)}</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <a href="${escapeHtml(app.danceLink)}" target="_blank" rel="noopener noreferrer" class="chrome-btn px-5 py-2.5 rounded-full text-xs font-tech font-bold tracking-wider text-white uppercase">
+            OPEN DANCE AUDITION ↗
+          </a>
+          <a href="${escapeHtml(app.vocalLink)}" target="_blank" rel="noopener noreferrer" class="chrome-btn px-5 py-2.5 rounded-full text-xs font-tech font-bold tracking-wider text-white uppercase">
+            OPEN VOCAL AUDITION ↗
+          </a>
+        </div>
+      `;
+
+      const modal = document.getElementById('dossier-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.closeDossierModal = function() {
+      const modal = document.getElementById('dossier-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    // -----------------------------------------------------------------------
+    // 7. TOAST NOTIFICATIONS & OUTER-SPACE STARFIELD CANVAS
+    // -----------------------------------------------------------------------
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const borderClass = type === 'error'
+        ? 'border-red-400/40 text-red-100'
+        : type === 'success'
+        ? 'border-emerald-400/40 text-emerald-100'
+        : 'border-white/25 text-slate-100';
+
+      toast.className = `liquid-glass rounded-full px-5 py-3 text-xs font-medium tracking-wide border ${borderClass} shadow-2xl pointer-events-auto transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // Subtle Realistic Outer-Space Starfield Canvas
+    function initStarfield() {
+      const canvas = document.getElementById('starfield-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      let width = 0;
+      let height = 0;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        const count = Math.min(220, Math.floor((width * height) / 7500));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 1.35 + 0.25,
+          alpha: Math.random() * 0.75 + 0.15,
+          delta: (Math.random() * 0.012 + 0.003) * (Math.random() > 0.5 ? 1 : -1),
+          driftY: Math.random() * 0.08 + 0.02
+        }));
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        for (const s of stars) {
+          s.alpha += s.delta;
+          if (s.alpha > 0.92 || s.alpha < 0.12) s.delta *= -1;
+          s.y -= s.driftY;
+          if (s.y < 0) {
+            s.y = height;
+            s.x = Math.random() * width;
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(241, 245, 249, ${s.alpha.toFixed(3)})`;
+          ctx.fill();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      animate();
+    }
+
+      <script>
+(function() {
+  const KEY = "2062056c-4f00-482b-963a-d20c386e1005";
+  let sending = false;
+
+  async function sendToEmail(payload) {
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(Object.assign({ access_key: KEY, from_name: "WILDKIDZ Audition Portal" }, payload))
+      });
+      const data = await res.json();
+      return Boolean(data && data.success);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function collectFields() {
+    const out = {};
+    const form = document.querySelector("form");
+    if (form) {
+      new FormData(form).forEach((v, k) => {
+        if (String(v).trim()) out[k] = String(v).trim();
       });
     }
-    return;
-  }
-
-  prog.style.display = "block";
-  const pct = Math.round(((state.step + 1) / 7) * 100);
-  document.getElementById("progressLabel").textContent = `STEP 0${state.step + 1} OF 07`;
-  document.getElementById("progressPct").textContent = `${pct}%`;
-  document.getElementById("progressFill").style.width = `${pct}%`;
-
-  const steps = [
-    `
-      <div class="stage-num">01 — NAME</div>
-      <h2 class="stage-heading">WHAT IS YOUR NAME?</h2>
-      <div class="field">
-        <label>Your Name (Press Enter for a boost)</label>
-        <input id="nameInput" value="${esc(state.name)}" placeholder="e.g. Zoe">
-        <div class="compliment" id="nameCompliment">${esc(state.complimentText)}</div>
-      </div>
-    `,
-    `
-      <div class="stage-num">02 — AGE & COUNTRY</div>
-      <h2 class="stage-heading">AGE & WHERE YOU'RE FROM</h2>
-      <div class="field">
-        <label>Your Age & Country</label>
-        <input id="ageCountryInput" value="${esc(state.ageCountry)}" placeholder="e.g. 15 — South Africa">
-      </div>
-    `,
-    `
-      <div class="stage-num">03 — EMAIL</div>
-      <h2 class="stage-heading">YOUR EMAIL ADDRESS</h2>
-      <div class="field">
-        <label>Email for WILDKIDZ Updates</label>
-        <input id="emailInput" type="email" value="${esc(state.email)}" placeholder="name@example.com">
-      </div>
-    `,
-    `
-      <div class="stage-num">04 — CATEGORY</div>
-      <h2 class="stage-heading">CHOOSE YOUR POSITIONS</h2>
-      <label>Select One or More</label>
-      <div class="chips" id="roleChips">
-        ${ROLES.map(r => `<button type="button" class="chip ${state.roles.includes(r) ? "active" : ""}" data-role="${r}">${r}</button>`).join("")}
-      </div>
-    `,
-    `
-      <div class="stage-num">05 — WHY WILDKIDZ</div>
-      <h2 class="stage-heading">WHY WILDKIDZ & YOUR TALENT</h2>
-      <div class="field">
-        <label>Why WILDKIDZ & What Makes You Shine?</label>
-        <textarea id="whyInput" placeholder="Tell us why you want WILDKIDZ and what you bring...">${esc(state.whyAndTalent)}</textarea>
-      </div>
-    `,
-    `
-      <div class="stage-num">06 — DANCE & SINGING LINKS</div>
-      <h2 class="stage-heading">PERFORMANCE VIDEO LINKS</h2>
-      <div class="media-box">
-        <div class="field">
-          <label>Dancing Video Link (https:// TikTok / IG / YouTube)</label>
-          <input id="danceInput" type="url" value="${esc(state.danceLink)}" placeholder="https://www.tiktok.com/... or https://youtube.com/...">
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Singing Video Link (https:// TikTok / IG / YouTube)</label>
-          <input id="singInput" type="url" value="${esc(state.singLink)}" placeholder="https://www.instagram.com/... or https://youtube.com/...">
-        </div>
-      </div>
-    `,
-    `
-      <div class="stage-num">07 — PHOTO & SIGN</div>
-      <h2 class="stage-heading">PHOTO & FINAL SIGN</h2>
-      <div class="media-box">
-        <label>Optional Photo Attachment</label>
-        <input id="photoInput" type="file" accept="image/*">
-        <div class="row-actions">
-          <button type="button" class="btn" onclick="toggleWhiteBg()">WHITE BG: ${state.whiteBg ? "ON" : "OFF"}</button>
-          <button type="button" class="btn" onclick="skipPhoto()">SKIP PHOTO</button>
-          ${state.photoUrl ? `<button type="button" class="btn" onclick="clearPhoto()">REMOVE</button>` : ""}
-        </div>
-        ${state.photoUrl && !state.photoSkipped ? `<img src="${state.photoUrl}" alt="Preview" class="preview-img ${state.whiteBg ? "white-bg" : ""}">` : ""}
-        ${state.photoSkipped ? `<div class="compliment" style="color:var(--silver-text);">Photo skipped.</div>` : ""}
-      </div>
-    `
-  ];
-
-  const isLast = state.step === 6;
-  box.innerHTML = `
-    ${steps[state.step]}
-    <div class="error-msg" id="errMsg"></div>
-    <div class="nav-bar">
-      <button type="button" class="btn" onclick="prevStep()" ${state.step === 0 ? "disabled" : ""}>PREVIOUS</button>
-      <button type="button" class="btn ${isLast ? "btn-red" : "btn-primary"}" onclick="${isLast ? "signAndSubmit()" : "nextStep()"}">
-        ${isLast ? "SIGN & SUBMIT" : "NEXT"}
-      </button>
-    </div>
-  `;
-
-  bindEvents();
-}
-
-function bindEvents() {
-  const nameEl = document.getElementById("nameInput");
-  if (nameEl) {
-    nameEl.addEventListener("input", e => {
-      state.name = e.target.value;
-      state.complimentText = getNameCompliment(state.name);
-      const comp = document.getElementById("nameCompliment");
-      if (comp) comp.textContent = state.complimentText;
+    document.querySelectorAll("input, textarea, select").forEach((el) => {
+      if (el.type === "password" || el.type === "hidden") return;
+      const key = el.name || el.id || el.getAttribute("aria-label") || el.placeholder;
+      const val = el.type === "checkbox" ? (el.checked ? "Agreed" : "") : (el.value || "").trim();
+      if (key && val && !out[key]) out[key] = val;
     });
-    nameEl.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        state.name = nameEl.value;
-        state.complimentText = getNameCompliment(state.name) || "Nice name ✦";
-        const comp = document.getElementById("nameCompliment");
-        if (comp) comp.textContent = state.complimentText;
-        const rect = nameEl.getBoundingClientRect();
-        spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 18);
-      }
-    });
+    const extra = window.wildkidzApplicationData || window.applicationData || {};
+    return Object.assign(out, extra);
   }
 
-  const ageEl = document.getElementById("ageCountryInput");
-  if (ageEl) ageEl.addEventListener("input", e => { state.ageCountry = e.target.value; });
+  document.addEventListener("click", async (e) => {
+    const btn = e.target && e.target.closest ? e.target.closest("button, [role='button'], input[type='submit']") : null;
+    if (!btn) return;
+    const label = (btn.innerText || btn.textContent || btn.value || "").toUpperCase();
+    if (!label.includes("SUBMIT OFFICIAL APPLICATION")) return;
+    if (btn.dataset.wkzSent === "1" || sending) return;
 
-  const emailEl = document.getElementById("emailInput");
-  if (emailEl) emailEl.addEventListener("input", e => { state.email = e.target.value; });
+    const raw = collectFields();
+    const name = raw.fullName || raw.Full_Name || raw.name || "Applicant";
+    const ref = raw.refNumber || raw.Reference_Number || ("WKZ-" + Date.now().toString().slice(-6));
+    const email = raw.email || raw.Applicant_Email || "";
 
-  const whyEl = document.getElementById("whyInput");
-  if (whyEl) whyEl.addEventListener("input", e => { state.whyAndTalent = e.target.value; });
+    sending = true;
+    e.preventDefault();
+    e.stopImmediatePropagation();
 
-  const danceEl = document.getElementById("danceInput");
-  if (danceEl) danceEl.addEventListener("input", e => { state.danceLink = e.target.value; });
+    const ok = await sendToEmail(Object.assign({
+      subject: "WILDKIDZ Audition — " + name + " (" + ref + ")",
+      replyto: email || undefined,
+      Reference_Number: ref
+    }, raw));
 
-  const singEl = document.getElementById("singInput");
-  if (singEl) singEl.addEventListener("input", e => { state.singLink = e.target.value; });
-
-  document.querySelectorAll("#roleChips .chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const r = chip.dataset.role;
-      state.roles = state.roles.includes(r) ? state.roles.filter(x => x !== r) : [...state.roles, r];
-      render();
-    });
-  });
-
-  const photoEl = document.getElementById("photoInput");
-  if (photoEl) {
-    photoEl.addEventListener("change", e => {
-      const f = e.target.files[0];
-      if (!f) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        state.photoUrl = reader.result;
-        state.photoSkipped = false;
-        render();
-      };
-      reader.readAsDataURL(f);
-    });
-  }
-}
-
-function toggleWhiteBg() { state.whiteBg = !state.whiteBg; render(); }
-function skipPhoto() { state.photoSkipped = true; state.photoUrl = ""; render(); }
-function clearPhoto() { state.photoUrl = ""; state.photoSkipped = false; render(); }
-
-function validHttps(url) {
-  const t = url.trim();
-  if (!t) return true;
-  return /^https:\/\/.+/i.test(t);
-}
-
-function validateStep(idx) {
-  const err = document.getElementById("errMsg");
-  if (idx === 0 && !state.name.trim()) {
-    err.textContent = "Please enter your name.";
-    return false;
-  }
-  if (idx === 1 && !state.ageCountry.trim()) {
-    err.textContent = "Please enter your age and country.";
-    return false;
-  }
-  if (idx === 2 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
-    err.textContent = "Please enter a valid email address.";
-    return false;
-  }
-  if (idx === 3 && !state.roles.length) {
-    err.textContent = "Select at least one category.";
-    return false;
-  }
-  if (idx === 4 && !state.whyAndTalent.trim()) {
-    err.textContent = "Please share why WILDKIDZ and your talent.";
-    return false;
-  }
-  if (idx === 5 && (!validHttps(state.danceLink) || !validHttps(state.singLink))) {
-    err.textContent = "Links must start with https:// (or leave blank).";
-    return false;
-  }
-  return true;
-}
-
-function nextStep() {
-  if (!validateStep(state.step)) return;
-  if (state.step < 6) {
-    state.step += 1;
-    render();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-}
-
-function prevStep() {
-  if (state.step > 0) {
-    state.step -= 1;
-    render();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-}
-
-async function signAndSubmit() {
-  if (!validateStep(state.step)) return;
-  state.converging = true;
-  starMode = "converge";
-  render();
-
-  const payload = {
-    access_key: WEB3FORMS_ACCESS_KEY,
-    subject: `WILDKIDZ Dossier — ${state.name} (${state.roles.join(", ")})`,
-    from_name: "WILDKIDZ Application Portal",
-    replyto: state.email,
-    Name: state.name,
-    Compliment: state.complimentText || getNameCompliment(state.name),
-    Age_And_Country: state.ageCountry,
-    Email: state.email,
-    Positions: state.roles.join(", "),
-    Why_WILDKIDZ_And_Talent: state.whyAndTalent,
-    Dancing_Video_Link: state.danceLink || "Not provided",
-    Singing_Video_Link: state.singLink || "Not provided",
-    Photo_Status: state.photoSkipped ? "Skipped" : (state.photoUrl ? (state.whiteBg ? "Attached (White BG)" : "Attached") : "None")
-  };
-
-  try {
-    await Promise.all([
-      new Promise(r => setTimeout(r, 1150)),
-      fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload)
-      })
-    ]);
-  } catch (_) {}
-
-  state.converging = false;
-  state.submitted = true;
-  starMode = "falling";
-  render();
-}
-
-function resetPortal() {
-  state.step = 0;
-  state.converging = false;
-  state.submitted = false;
-  state.name = "";
-  state.complimentText = "";
-  state.ageCountry = "";
-  state.email = "";
-  state.roles = [];
-  state.whyAndTalent = "";
-  state.danceLink = "";
-  state.singLink = "";
-  state.photoUrl = "";
-  state.whiteBg = false;
-  state.photoSkipped = false;
-  starMode = "falling";
-  render();
-}
-
-const canvas = document.getElementById("starCanvas");
-const ctx = canvas.getContext("2d");
-let stars = [];
-let bursts = [];
-let starMode = "falling";
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-for (let i = 0; i < 48; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: 4.5 + Math.random() * 6.5,
-    vy: 0.28 + Math.random() * 0.45,
-    swayAmp: 0.45 + Math.random() * 0.95,
-    swaySpeed: 0.009 + Math.random() * 0.012,
-    phase: Math.random() * Math.PI * 2,
-    rot: Math.random() * Math.PI,
-    vRot: (Math.random() - 0.5) * 0.012,
-    alpha: 0.55 + Math.random() * 0.4
-  });
-}
-
-function spawnBurst(x, y, count = 12) {
-  for (let i = 0; i < count; i++) {
-    const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.35;
-    const spd = 1.6 + Math.random() * 3.4;
-    bursts.push({
-      x,
-      y,
-      vx: Math.cos(ang) * spd,
-      vy: Math.sin(ang) * spd - 0.8,
-      r: 3 + Math.random() * 4,
-      rot: Math.random() * Math.PI,
-      vRot: (Math.random() - 0.5) * 0.14,
-      life: 1
-    });
-  }
-}
-
-window.addEventListener("pointerdown", e => {
-  spawnBurst(e.clientX, e.clientY, 12);
-});
-
-function drawStar(x, y, r, rot, alpha, fill = "#9AA4B2", stroke = "#6F7886") {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rot);
-  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-  const outer = r * 2.2;
-  const inner = r * 0.44;
-  ctx.beginPath();
-  for (let i = 0; i < 8; i++) {
-    const rad = i % 2 === 0 ? outer : inner;
-    const ang = (i * Math.PI) / 4;
-    const px = Math.cos(ang) * rad;
-    const py = Math.sin(ang) * rad;
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.lineWidth = 0.9;
-  ctx.strokeStyle = stroke;
-  ctx.stroke();
-  ctx.restore();
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const cx = canvas.width / 2;
-  const cy = Math.min(canvas.height * 0.42, 320);
-
-  for (const s of stars) {
-    if (starMode === "converge") {
-      s.x += (cx - s.x) * 0.085;
-      s.y += (cy - s.y) * 0.085;
-      s.rot += 0.12;
-      drawStar(s.x, s.y, s.r * 0.85, s.rot, s.alpha, "#B2BCC9", "#6E1C2B");
-    } else {
-      s.phase += s.swaySpeed;
-      s.x += Math.sin(s.phase) * s.swayAmp;
-      s.y += s.vy;
-      s.rot += s.vRot;
-      if (s.y > canvas.height + 28) {
-        s.y = -28;
-        s.x = Math.random() * canvas.width;
-      }
-      if (s.x < -28) s.x = canvas.width + 28;
-      if (s.x > canvas.width + 28) s.x = -28;
-      drawStar(s.x, s.y, s.r, s.rot, s.alpha);
+    sending = false;
+    if (!ok) {
+      alert("Could not send application right now. Please try again.");
+      return;
     }
-  }
 
-  for (let i = bursts.length - 1; i >= 0; i--) {
-    const b = bursts[i];
-    b.x += b.vx;
-    b.y += b.vy;
-    b.vy += 0.06;
-    b.rot += b.vRot;
-    b.life -= 0.028;
-    if (b.life <= 0) {
-      bursts.splice(i, 1);
-      continue;
-    }
-    drawStar(b.x, b.y, b.r, b.rot, b.life, "#C4CDD8", "#6E1C2B");
-  }
-
-  requestAnimationFrame(animate);
-}
-
-animate();
-render();
+    btn.dataset.wkzSent = "1";
+    btn.click();
+  }, true);
+})();
 </script>
-</body>
-</html>
+<form action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="2062056c-4f00-482b-963a-d20c386e1005">
+  <input type="text" name="name" required>
+  <input type="email" name="email" required>
+  <textarea name="message" required></textarea>
+  <button type="submit">Submit</button>
+</form>
+
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const submitBtn = Array.from(document.querySelectorAll("button")).find((btn) =>
+    btn.textContent.toUpperCase().includes("SUBMIT OFFICIAL APPLICATION")
+  );
+  if (!submitBtn) return;
+
+  submitBtn.addEventListener("click", async (event) => {
+    const data = window.wildkidzApplicationData || window.applicationData;
+    if (!data) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const sent = await submitApplicationToEmail(data);
+    if (!sent) {
+      alert("Could not send application right now. Please try again.");
+      return;
+    }
+    if (typeof window.showConfirmationScreen === "function") {
+      window.showConfirmationScreen(data);
+    }
+  }, true);
+});
+</script>
+
+
+            </html>
