@@ -1092,7 +1092,8 @@
     // 1. FIREBASE INITIALIZATION & AUTHENTICATION
     // -----------------------------------------------------------------------
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'wildkidz-auditions-default';
-    const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit/2062056c-4f00-482b-963a-d20c386e1005';
+    const WEB3FORMS_ACCESS_KEY = '20262056c-4f00-482b-963a-d20c386e1005';
+    const WEB3FORMS_ENDPOINT = `https://api.web3forms.com/submit/${WEB3FORMS_ACCESS_KEY}`;
 
     let db = null;
     let auth = null;
@@ -1205,7 +1206,6 @@
         target.classList.remove('hidden');
       }
 
-      // Update Navigation Progress Pills visibility & active highlight
       const desktopProg = document.getElementById('nav-progress-bar');
       const mobileProg = document.getElementById('mobile-progress-bar');
       const isStepView = viewName.startsWith('step-');
@@ -1234,7 +1234,6 @@
         mobileProg.classList.remove('flex');
       }
 
-      // Clear red edge vignette when switching views cleanly
       setRedWarningVignette(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1253,7 +1252,6 @@
       navigateTo('step-1');
     };
 
-    // Enforce No-Skipping rule on top progress bar clicks
     window.attemptStepJump = function(targetStep) {
       const currentStepNum = currentView.startsWith('step-') ? parseInt(currentView.replace('step-', ''), 10) : 1;
       if (targetStep <= currentStepNum) {
@@ -1553,6 +1551,7 @@
           'Accept': 'application/json'
         },
         body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
           from_name: 'WILDKIDZ Audition Portal',
           subject: `WILDKIDZ Audition — ${payload.fullName} (${payload.referenceNumber})`,
           replyto: payload.email,
