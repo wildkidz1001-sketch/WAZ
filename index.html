@@ -1,5 +1,4 @@
- ```html
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
@@ -1082,7 +1081,7 @@
   </div>
 
   <!-- =====================================================================
-       APPLICATION LOGIC & FIREBASE FIRESTORE INTEGRATION
+       APPLICATION LOGIC, WEB3FORMS DISPATCH & FIREBASE FIRESTORE
        ===================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -1093,6 +1092,8 @@
     // 1. FIREBASE INITIALIZATION & AUTHENTICATION
     // -----------------------------------------------------------------------
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'wildkidz-auditions-default';
+    const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit/2062056c-4f00-482b-963a-d20c386e1005';
+
     let db = null;
     let auth = null;
     let currentUser = null;
@@ -1102,7 +1103,7 @@
     async function initFirebase() {
       try {
         if (typeof __firebase_config === 'undefined') {
-          console.warn('Firebase config not found in environment; running with in-memory fallback.');
+          console.warn('Firebase config not found in environment; running with Web3Forms + local session fallback.');
           return;
         }
         const firebaseConfig = JSON.parse(__firebase_config);
@@ -1259,7 +1260,6 @@
         navigateTo(`step-${targetStep}`);
         return;
       }
-      // Validate sequentially up to targetStep - 1
       for (let s = currentStepNum; s < targetStep; s++) {
         if (!runStepValidation(s)) {
           showToast('Complete all required fields before advancing.', 'error');
@@ -1286,7 +1286,7 @@
       const errEl = document.getElementById(`err-${fieldId}`);
       if (inputEl) {
         inputEl.classList.remove('field-error');
-        void inputEl.offsetWidth; // trigger reflow so shake animation replays
+        void inputEl.offsetWidth;
         inputEl.classList.add('field-error');
       }
       if (errEl) {
@@ -1426,7 +1426,6 @@
       navigateTo(`step-${currentStep + 1}`);
     };
 
-    // Attach real-time input listeners so red warnings clear smoothly upon correction
     const watchedFields = [
       'fullName', 'age', 'birthday', 'height', 'country', 'email', 'phone', 'whyWildkidz',
       'danceLink', 'vocalLink', 'musicTaste', 'guardianName', 'guardianContact'
@@ -1458,7 +1457,7 @@
     });
 
     // -----------------------------------------------------------------------
-    // 5. REVIEW SUMMARY & OFFICIAL SUBMISSION
+    // 5. REVIEW SUMMARY, WEB3FORMS EMAIL DISPATCH & SUBMISSION
     // -----------------------------------------------------------------------
     function escapeHtml(str) {
       return String(str || '')
@@ -1546,10 +1545,47 @@
       return `WKZ-${year}-${code}`;
     }
 
+    async function dispatchAuditionToWeb3Forms(payload) {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          from_name: 'WILDKIDZ Audition Portal',
+          subject: `WILDKIDZ Audition — ${payload.fullName} (${payload.referenceNumber})`,
+          replyto: payload.email,
+          Reference_Number: payload.referenceNumber,
+          Full_Name: payload.fullName,
+          Age: payload.age,
+          Minor_Status: payload.isMinor ? 'Under 18 (Guardian Verified)' : '18 or Older',
+          Guardian_Name: payload.guardianName || 'N/A',
+          Guardian_Contact: payload.guardianContact || 'N/A',
+          Birthday: payload.birthday,
+          Height: payload.height,
+          Country: payload.country,
+          Applicant_Email: payload.email,
+          Phone_Number: payload.phone,
+          Category: payload.category,
+          Dance_Audition_Link: payload.danceLink,
+          Vocal_Audition_Link: payload.vocalLink,
+          Why_WILDKIDZ: payload.whyWildkidz,
+          Music_Taste: payload.musicTaste,
+          Submitted_At: payload.submittedAt
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data || !data.success) {
+        throw new Error((data && data.message) || 'Web3Forms submission failed.');
+      }
+      return data;
+    }
+
     window.submitOfficialApplication = async function() {
       if (isSubmitting || hasSubmittedCurrentSession) return;
 
-      // Re-verify all 3 stages before final submission
       if (!runStepValidation(1)) { navigateTo('step-1'); return; }
       if (!runStepValidation(2)) { navigateTo('step-2'); return; }
       if (!runStepValidation(3)) { navigateTo('step-3'); return; }
@@ -1587,7 +1623,6 @@
 
       if (!finalValid) return;
 
-      // Lock submit button to prevent duplicate submissions
       isSubmitting = true;
       const submitBtn = document.getElementById('submit-final-btn');
       const originalBtnText = submitBtn.innerHTML;
@@ -1618,11 +1653,14 @@
       };
 
       try {
+        // 1. Dispatch directly to Web3Forms email inbox
+        await dispatchAuditionToWeb3Forms(payload);
+
+        // 2. Also persist to Firestore if configured, otherwise local session cache
         if (db && currentUser) {
           const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'wildkidz_applications', referenceNumber);
           await setDoc(docRef, payload);
         } else {
-          // Fallback local session cache if Firebase is unavailable
           applicationsCache.unshift(payload);
         }
 
@@ -1631,8 +1669,8 @@
         setRedWarningVignette(false);
         navigateTo('confirmation');
       } catch (err) {
-        console.error('Error saving audition application:', err);
-        showToast('Network interruption while saving application. Please try again.', 'error');
+        console.error('Submission error:', err);
+        showToast('Could not send application right now. Please check your connection and try again.', 'error');
       } finally {
         isSubmitting = false;
         submitBtn.disabled = false;
@@ -1720,7 +1758,6 @@
           snapshot.forEach((docSnap) => {
             list.push(docSnap.data());
           });
-          // Sort newest first in JS memory
           list.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
           applicationsCache = list;
           renderManagementDashboard();
@@ -1818,7 +1855,6 @@
 
         return `
           <div class="liquid-glass rounded-3xl p-5 sm:p-6 border border-white/15 space-y-4">
-            <!-- Top Row: Ref, Name, Category & Status Selector -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-white/10 pb-4">
               <div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -1833,7 +1869,6 @@
                 </h3>
               </div>
 
-              <!-- Status Updater Dropdown -->
               <div class="flex items-center gap-2.5">
                 <span class="px-3 py-1 rounded-full text-[10px] font-tech tracking-wider border ${statusBadgeStyles} uppercase">
                   ${escapeHtml(app.status)}
@@ -1848,7 +1883,6 @@
               </div>
             </div>
 
-            <!-- Middle Row: Why WILDKIDZ Excerpt & Music Taste -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div class="liquid-glass-subtle rounded-2xl p-3.5 border border-white/5">
                 <div class="text-[10px] font-tech tracking-wider text-slate-400 uppercase mb-1">AUDITION STATEMENT</div>
@@ -1860,7 +1894,6 @@
               </div>
             </div>
 
-            <!-- Bottom Row: Audition Video Links & Full Dossier Trigger -->
             <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
               <div class="flex flex-wrap items-center gap-2.5">
                 <a href="${escapeHtml(app.danceLink)}" target="_blank" rel="noopener noreferrer" class="chrome-btn px-4 py-2 rounded-full text-[11px] font-tech font-semibold tracking-wider text-white uppercase inline-flex items-center gap-1.5">
@@ -1993,9 +2026,9 @@
       }, 3200);
     }
 
-    // Subtle Realistic Outer-Space Starfield Canvas
     function initStarfield() {
       const canvas = document.getElementById('starfield-canvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
       let stars = [];
       let width = 0;
@@ -2039,108 +2072,7 @@
       animate();
     }
 
-      <script>
-(function() {
-  const KEY = "2062056c-4f00-482b-963a-d20c386e1005";
-  let sending = false;
-
-  async function sendToEmail(payload) {
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(Object.assign({ access_key: KEY, from_name: "WILDKIDZ Audition Portal" }, payload))
-      });
-      const data = await res.json();
-      return Boolean(data && data.success);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function collectFields() {
-    const out = {};
-    const form = document.querySelector("form");
-    if (form) {
-      new FormData(form).forEach((v, k) => {
-        if (String(v).trim()) out[k] = String(v).trim();
-      });
-    }
-    document.querySelectorAll("input, textarea, select").forEach((el) => {
-      if (el.type === "password" || el.type === "hidden") return;
-      const key = el.name || el.id || el.getAttribute("aria-label") || el.placeholder;
-      const val = el.type === "checkbox" ? (el.checked ? "Agreed" : "") : (el.value || "").trim();
-      if (key && val && !out[key]) out[key] = val;
-    });
-    const extra = window.wildkidzApplicationData || window.applicationData || {};
-    return Object.assign(out, extra);
-  }
-
-  document.addEventListener("click", async (e) => {
-    const btn = e.target && e.target.closest ? e.target.closest("button, [role='button'], input[type='submit']") : null;
-    if (!btn) return;
-    const label = (btn.innerText || btn.textContent || btn.value || "").toUpperCase();
-    if (!label.includes("SUBMIT OFFICIAL APPLICATION")) return;
-    if (btn.dataset.wkzSent === "1" || sending) return;
-
-    const raw = collectFields();
-    const name = raw.fullName || raw.Full_Name || raw.name || "Applicant";
-    const ref = raw.refNumber || raw.Reference_Number || ("WKZ-" + Date.now().toString().slice(-6));
-    const email = raw.email || raw.Applicant_Email || "";
-
-    sending = true;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    const ok = await sendToEmail(Object.assign({
-      subject: "WILDKIDZ Audition — " + name + " (" + ref + ")",
-      replyto: email || undefined,
-      Reference_Number: ref
-    }, raw));
-
-    sending = false;
-    if (!ok) {
-      alert("Could not send application right now. Please try again.");
-      return;
-    }
-
-    btn.dataset.wkzSent = "1";
-    btn.click();
-  }, true);
-})();
-</script>
-<form action="https://api.web3forms.com/submit" method="POST">
-  <input type="hidden" name="access_key" value="2062056c-4f00-482b-963a-d20c386e1005">
-  <input type="text" name="name" required>
-  <input type="email" name="email" required>
-  <textarea name="message" required></textarea>
-  <button type="submit">Submit</button>
-</form>
-
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const submitBtn = Array.from(document.querySelectorAll("button")).find((btn) =>
-    btn.textContent.toUpperCase().includes("SUBMIT OFFICIAL APPLICATION")
-  );
-  if (!submitBtn) return;
-
-  submitBtn.addEventListener("click", async (event) => {
-    const data = window.wildkidzApplicationData || window.applicationData;
-    if (!data) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const sent = await submitApplicationToEmail(data);
-    if (!sent) {
-      alert("Could not send application right now. Please try again.");
-      return;
-    }
-    if (typeof window.showConfirmationScreen === "function") {
-      window.showConfirmationScreen(data);
-    }
-  }, true);
-});
-</script>
-
-
-            </html>
+    initStarfield();
+  </script>
+</body>
+</html>
